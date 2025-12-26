@@ -10,10 +10,19 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+Route::get('/hello', function () {
+    return "hello World!";
+});
+
+Route::get('/contact', function () {
+    return Inertia::render('Contact', ['greetings' => "Hello World!", 'name' => 'Dhurjoy Paul']);
+});
+
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 });
 
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';

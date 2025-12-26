@@ -1,0 +1,96 @@
+Laravel Project – Switch Database from SQLite to MySQL (XAMPP)
+
+---------------------------------------
+REQUIREMENTS
+---------------------------------------
+- XAMPP installed
+- MySQL running from XAMPP Control Panel
+- Laravel project created using:
+  laravel new project_name
+
+---------------------------------------
+STEP 1: START MYSQL (XAMPP)
+---------------------------------------
+1. Open XAMPP Control Panel
+2. Click "Start" on MySQL
+3. Ensure MySQL status shows "Running"
+
+---------------------------------------
+STEP 2: CREATE DATABASE (OPTIONAL)
+---------------------------------------
+NOTE:
+- Database can be created manually OR
+- Laravel may prompt to create it during `php artisan migrate`
+  (depends on MySQL permissions and Laravel version)
+
+Using phpMyAdmin:
+1. Open http://localhost/phpmyadmin
+2. Click "Databases"
+3. Create a new database:
+
+   Database name: laravel_crud
+   Collation: utf8mb4_unicode_ci
+
+---------------------------------------
+STEP 3: UPDATE .env FILE
+---------------------------------------
+Open .env and update database configuration:
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel_crud
+DB_USERNAME=root
+DB_PASSWORD=
+
+Note:
+- XAMPP default MySQL user is `root`
+- Default password is empty
+
+---------------------------------------
+STEP 4: REMOVE SQLITE FILE (OPTIONAL)
+---------------------------------------
+If switching fully to MySQL, delete this file if it exists:
+
+database/database.sqlite
+
+(This file is used only for SQLite)
+
+---------------------------------------
+STEP 5: CLEAR CONFIG CACHE
+---------------------------------------
+Run the following commands in the project root:
+
+php artisan config:clear
+php artisan cache:clear
+php artisan optimize:clear
+
+---------------------------------------
+STEP 6: RUN MIGRATIONS
+---------------------------------------
+Create tables in MySQL:
+
+php artisan migrate
+
+---------------------------------------
+STEP 7: VERIFY CONNECTION (OPTIONAL)
+---------------------------------------
+Verify database connection using Tinker:
+
+php artisan tinker
+
+Inside Tinker, run:
+
+DB::getDefaultConnection();
+(Expected output: "mysql")
+
+DB::connection()->getPdo();
+(No error means the connection is successful)
+
+Exit Tinker:
+exit
+
+---------------------------------------
+DONE
+---------------------------------------
+Laravel project is now using MySQL instead of SQLite.

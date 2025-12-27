@@ -55,7 +55,7 @@ export default function Posts({ categories, posts }: Props) {
     // console.log(posts);
     const postItems = posts.data;
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={breadcrumbs} create_post={true}>
             <Head title="Posts" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 {/* tabs */}

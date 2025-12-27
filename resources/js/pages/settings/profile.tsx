@@ -7,6 +7,7 @@ import { Form, Head, Link, usePage } from '@inertiajs/react';
 import DeleteUser from '@/components/delete-user';
 import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -36,23 +37,65 @@ export default function Profile({
 
             <SettingsLayout>
                 <div className="space-y-6">
+                    <HeadingSmall title="Profile information" />
+                    <div className="flex items-center gap-9">
+                        <Avatar className="size-36">
+                            <AvatarImage src={`/storage/${auth.user.image}`} />
+                            <AvatarFallback>
+                                {`${auth.user.name}'s avatar`}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col gap-2">
+                            <div className="flex items-center">
+                                <Label className="min-w-18">Name</Label>
+                                <p className="pr-auto w-full flex-1 rounded-md border border-secondary py-1 pr-50 pl-3">
+                                    {auth.user.name}
+                                </p>
+                            </div>
+                            <div className="flex items-center">
+                                <Label className="min-w-18">Bio</Label>
+                                <p className="pr-auto w-full flex-1 rounded-md border border-secondary py-1 pr-50 pl-3">
+                                    {auth.user.bio}g
+                                </p>
+                            </div>
+                            <div className="flex items-center">
+                                <Label className="min-w-18">Email</Label>
+                                <p className="pr-auto w-full flex-1 rounded-md border border-secondary py-1 pr-50 pl-3">
+                                    {auth.user.email}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <hr className="my-12" />
                     <HeadingSmall
-                        title="Profile information"
-                        description="Update your name and email address"
+                        title="Edit profile information"
+                        description="Update your profile details"
                     />
 
                     <Form
                         {...ProfileController.update.form()}
-                        options={{
-                            preserveScroll: true,
-                        }}
+                        options={{ preserveScroll: true }}
                         className="space-y-6"
                     >
                         {({ processing, recentlySuccessful, errors }) => (
                             <>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="name">Name</Label>
+                                    <Label htmlFor="image">Profile Image</Label>
+                                    <Input
+                                        type="file"
+                                        id="image"
+                                        className="mt-1 block w-full"
+                                        name="image"
+                                        autoComplete="image"
+                                    />
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.image}
+                                    />
+                                </div>
 
+                                <div className="grid gap-2">
+                                    <Label htmlFor="name">Name</Label>
                                     <Input
                                         id="name"
                                         className="mt-1 block w-full"
@@ -62,7 +105,22 @@ export default function Profile({
                                         autoComplete="name"
                                         placeholder="Full name"
                                     />
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.name}
+                                    />
+                                </div>
 
+                                <div className="grid gap-2">
+                                    <Label htmlFor="bio">Bio</Label>
+                                    <Input
+                                        id="bio"
+                                        className="mt-1 block w-full"
+                                        defaultValue={auth.user.bio}
+                                        name="bio"
+                                        autoComplete="bio"
+                                        placeholder="Profile bio"
+                                    />
                                     <InputError
                                         className="mt-2"
                                         message={errors.name}
@@ -71,7 +129,6 @@ export default function Profile({
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="email">Email address</Label>
-
                                     <Input
                                         id="email"
                                         type="email"
@@ -82,7 +139,6 @@ export default function Profile({
                                         autoComplete="username"
                                         placeholder="Email address"
                                     />
-
                                     <InputError
                                         className="mt-2"
                                         message={errors.email}

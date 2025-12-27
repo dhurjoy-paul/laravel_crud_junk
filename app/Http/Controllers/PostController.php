@@ -22,11 +22,6 @@ class PostController extends Controller
             'categories' => $categories,
             'posts' => $posts,
         ]);
-        // $posts = Post::get();
-        // dd($posts);     // dump and die
-
-        // will not work because i am using inertia
-        // return view('dashboard');
     }
 
     /**

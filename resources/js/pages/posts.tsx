@@ -85,9 +85,11 @@ export default function Posts({ categories, posts }: Props) {
                                 href={post.slug}
                                 className="border-default flex flex-col items-center rounded-md border bg-card px-3 py-1 shadow-xs md:max-w-xl md:flex-row"
                             >
-                                {/* <img src={image} alt={title}
-                                    className="mb-4 md:mb-0 rounded-base w-full md:w-48 h-64 md:h-auto object-cover"
-                                /> */}
+                                <img
+                                    src={`/storage/${post.image}`}
+                                    alt={post.title}
+                                    className="rounded-base mb-4 h-64 w-full object-cover md:mb-0 md:h-auto md:w-48"
+                                />
                                 <div className="flex flex-col justify-between leading-normal md:p-4">
                                     <h5 className="text-heading mb-2 text-2xl font-bold tracking-tight">
                                         {post.title}

@@ -23,18 +23,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // create post
     Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
 
+    // for posting a post
     Route::post('/post/create', [PostController::class, 'store'])->name('post.store');
-});
-
-Route::get('/hello', function () {
-    return "hello World!";
-});
-
-Route::get('/contact', function () {
-    return Inertia::render('Contact', [
-        'greetings' => "Hello World!",
-        'name' => 'Dhurjoy Paul'
-    ]);
 });
 
 require __DIR__ . '/settings.php';

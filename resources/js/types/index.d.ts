@@ -1,6 +1,43 @@
 import { InertiaLinkProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
 
+interface Category {
+    id: number;
+    name: string;
+}
+
+interface Post {
+    id: number;
+    slug: string;
+
+    image: string;
+    title: string;
+    content: string;
+    category_id: number;
+    user_id: number;
+
+    published_at: string;
+}
+
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
+interface PaginatedData<T> {
+    data: T[];
+    per_page: number;
+    current_page: number;
+    path: string;
+    total: number;
+    last_page: number;
+
+    links: PaginationLink[];
+    prev_page_url: string | null;
+    next_page_url: string | null;
+}
+
 export interface Auth {
     user: User;
 }

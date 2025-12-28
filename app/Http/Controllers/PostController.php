@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Laravel\Fortify\Features;
 
 class PostController extends Controller
 {
@@ -16,13 +17,34 @@ class PostController extends Controller
      */
     public function index()
     {
-        $categories = Category::get();
-        $posts = Post::orderBy('created_at', 'DESC')->paginate(6);
-        return Inertia::render('posts', [
-            'categories' => $categories,
-            'posts' => $posts,
-        ]);
+        // Common data
+        $data = [
+            'categories' => Category::all(),
+            'posts' => Post::latest()->paginate(6),
+        ];
+
+        return Inertia::render('posts', $data);
     }
+
+    public function welcome()
+    {
+        $data = [
+            'categories' => Category::all(),
+            'posts' => Post::latest()->paginate(6),
+            'canRegister' => Features::enabled(Features::registration()),
+        ];
+
+        return Inertia::render('welcome', $data);
+    }
+    // public function index()
+    // {
+    //     $categories = Category::get();
+    //     $posts = Post::orderBy('created_at', 'DESC')->paginate(6);
+    //     return Inertia::render('posts', 'welcome', [
+    //         'categories' => $categories,
+    //         'posts' => $posts,
+    //     ]);
+    // }
 
     /**
      * Show the form for creating a new resource.

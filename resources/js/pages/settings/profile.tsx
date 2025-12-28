@@ -48,19 +48,19 @@ export default function Profile({
                         <div className="flex flex-col gap-2">
                             <div className="flex items-center">
                                 <Label className="min-w-18">Name</Label>
-                                <p className="pr-auto w-full flex-1 rounded-md border border-secondary py-1 pr-50 pl-3">
+                                <p className="flex-1 py-1 pr-50 pr-auto pl-3 border border-secondary rounded-md w-full">
                                     {auth.user.name}
                                 </p>
                             </div>
                             <div className="flex items-center">
                                 <Label className="min-w-18">Bio</Label>
-                                <p className="pr-auto w-full flex-1 rounded-md border border-secondary py-1 pr-50 pl-3">
-                                    {auth.user.bio}g
+                                <p className="flex-1 py-1 pr-50 pr-auto pl-3 border border-secondary rounded-md w-full">
+                                    {auth.user.bio}
                                 </p>
                             </div>
                             <div className="flex items-center">
                                 <Label className="min-w-18">Email</Label>
-                                <p className="pr-auto w-full flex-1 rounded-md border border-secondary py-1 pr-50 pl-3">
+                                <p className="flex-1 py-1 pr-50 pr-auto pl-3 border border-secondary rounded-md w-full">
                                     {auth.user.email}
                                 </p>
                             </div>
@@ -79,12 +79,12 @@ export default function Profile({
                     >
                         {({ processing, recentlySuccessful, errors }) => (
                             <>
-                                <div className="grid gap-2">
+                                <div className="gap-2 grid">
                                     <Label htmlFor="image">Profile Image</Label>
                                     <Input
                                         type="file"
                                         id="image"
-                                        className="mt-1 block w-full"
+                                        className="block mt-1 w-full"
                                         name="image"
                                         autoComplete="image"
                                     />
@@ -94,11 +94,11 @@ export default function Profile({
                                     />
                                 </div>
 
-                                <div className="grid gap-2">
+                                <div className="gap-2 grid">
                                     <Label htmlFor="name">Name</Label>
                                     <Input
                                         id="name"
-                                        className="mt-1 block w-full"
+                                        className="block mt-1 w-full"
                                         defaultValue={auth.user.name}
                                         name="name"
                                         required
@@ -111,11 +111,11 @@ export default function Profile({
                                     />
                                 </div>
 
-                                <div className="grid gap-2">
+                                <div className="gap-2 grid">
                                     <Label htmlFor="bio">Bio</Label>
                                     <Input
                                         id="bio"
-                                        className="mt-1 block w-full"
+                                        className="block mt-1 w-full"
                                         defaultValue={auth.user.bio}
                                         name="bio"
                                         autoComplete="bio"
@@ -127,12 +127,12 @@ export default function Profile({
                                     />
                                 </div>
 
-                                <div className="grid gap-2">
+                                <div className="gap-2 grid">
                                     <Label htmlFor="email">Email address</Label>
                                     <Input
                                         id="email"
                                         type="email"
-                                        className="mt-1 block w-full"
+                                        className="block mt-1 w-full"
                                         defaultValue={auth.user.email}
                                         name="email"
                                         required
@@ -148,13 +148,13 @@ export default function Profile({
                                 {mustVerifyEmail &&
                                     auth.user.email_verified_at === null && (
                                         <div>
-                                            <p className="-mt-4 text-sm text-muted-foreground">
+                                            <p className="-mt-4 text-muted-foreground text-sm">
                                                 Your email address is
                                                 unverified.{' '}
                                                 <Link
                                                     href={send()}
                                                     as="button"
-                                                    className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
+                                                    className="text-foreground decoration-neutral-300 hover:decoration-current! dark:decoration-neutral-500 underline underline-offset-4 transition-colors duration-300 ease-out"
                                                 >
                                                     Click here to resend the
                                                     verification email.
@@ -163,7 +163,7 @@ export default function Profile({
 
                                             {status ===
                                                 'verification-link-sent' && (
-                                                <div className="mt-2 text-sm font-medium text-green-600">
+                                                <div className="mt-2 font-medium text-green-600 text-sm">
                                                     A new verification link has
                                                     been sent to your email
                                                     address.
@@ -187,7 +187,7 @@ export default function Profile({
                                         leave="transition ease-in-out"
                                         leaveTo="opacity-0"
                                     >
-                                        <p className="text-sm text-neutral-600">
+                                        <p className="text-neutral-600 text-sm">
                                             Saved
                                         </p>
                                     </Transition>

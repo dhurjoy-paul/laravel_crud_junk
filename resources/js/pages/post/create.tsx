@@ -24,6 +24,14 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+const handleFileChange = (e: any) => {
+    const file = e.target.files[0];
+    if (file && file.size > 2048 * 1024) {
+        alert('File is too big! Max 2MB.');
+        e.target.value = '';
+    }
+};
+
 export default function create({ categories }: { categories: Category[] }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -41,12 +49,7 @@ export default function create({ categories }: { categories: Category[] }) {
                         </div>
                     </div>
 
-                    <Form
-                        {...store.post()}
-                        // resetOnSuccess={['password', 'password_confirmation']}
-                        // disableWhileProcessing
-                        className="flex flex-col gap-6"
-                    >
+                    <Form {...store.post()} className="flex flex-col gap-6">
                         {({ processing, errors }) => (
                             <>
                                 <div className="grid gap-6">
@@ -97,6 +100,8 @@ export default function create({ categories }: { categories: Category[] }) {
                                             name="image"
                                             placeholder="Image URL"
                                             className="dark:bg-input/30"
+                                            accept="image/jpeg,image/png,image/jpg,image/svg+xml,image/gif"
+                                            onChange={handleFileChange}
                                         />
                                         <InputError message={errors.image} />
                                     </div>

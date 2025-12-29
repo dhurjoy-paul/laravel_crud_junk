@@ -27,6 +27,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // for POST a post
     Route::post('/post/create', [PostController::class, 'store'])->name('post.store');
 
+    // for get edit data
+    Route::get('/post/{post}/edit', [PostController::class, 'edit'])->name('post.edit');
+
+    // for update a post
+    Route::post('/post/{post}/update', [PostController::class, 'update'])->name('post.update');
+
     // for DELETE a post
     Route::delete('/post/{post}', [PostController::class, 'destroy'])->name('post.destroy');
 });

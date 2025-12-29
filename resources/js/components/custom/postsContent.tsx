@@ -1,3 +1,4 @@
+import post from '@/routes/post';
 import { PaginatedData, Post } from '@/types';
 import { Link, router } from '@inertiajs/react';
 
@@ -73,8 +74,7 @@ export default function PostsContent({
                                 {actions && (
                                     <div className="flex items-center gap-2">
                                         <Link
-                                            // href={post.update().url}
-                                            // href={route('post.edit', post.id)}
+                                            href={post.edit(p.id).url}
                                             className="inline-flex items-center justify-center rounded-md border bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
                                         >
                                             Edit

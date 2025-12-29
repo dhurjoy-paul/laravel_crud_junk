@@ -81,7 +81,7 @@ class PostController extends Controller
         $data = $request->validate([
             'title' => 'required',
             'content' => 'required',
-            'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg|max:2048'],
+            'image' => ['required', 'image', 'mimes:jpeg,png,jpg,svg', 'max:2048'],
             'category_id' => ['required', 'exists:categories,id'],
             'published_at' => ['nullable', 'date']
         ]);
@@ -102,9 +102,21 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
+    // App\Http\Controllers\PostController.php
+
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit(Post $post)
     {
-        //
+        if ($post->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return Inertia::render('post/edit', [
+            'post' => $post,
+            'categories' => Category::all(),
+        ]);
     }
 
     /**
@@ -112,12 +124,35 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        if ($post->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $rules = [
+            'title' => 'required',
+            'content' => 'required',
+            'category_id' => ['required', 'exists:categories,id'],
+            'published_at' => ['nullable', 'date'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,svg,gif', 'max:2048'],
+        ];
+
+        $data = $request->validate($rules);
+
+        // Handle Image if uploaded
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('posts', 'public');
+            $data['image'] = $imagePath;
+        } else {
+            unset($data['image']);
+        }
+
+        $data['slug'] = Str::slug($data['title']);
+
+        $post->update($data);
+
+        return redirect()->route('posts')->with('message', 'Post updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Post $post)
     {
         if ($post->user_id !== Auth::id()) {

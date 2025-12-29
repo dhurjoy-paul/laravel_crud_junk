@@ -24,8 +24,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // create post
     Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
 
-    // for posting a post
+    // for POST a post
     Route::post('/post/create', [PostController::class, 'store'])->name('post.store');
+
+    // for DELETE a post
+    Route::delete('/post/{post}', [PostController::class, 'destroy'])->name('post.destroy');
 });
 
 require __DIR__ . '/settings.php';

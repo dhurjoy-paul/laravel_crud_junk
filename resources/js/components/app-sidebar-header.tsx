@@ -20,7 +20,7 @@ export function AppSidebarHeader({
                     <Link
                         href={post.create().url}
                         type="button"
-                        className="border-default-medium text-body focus:outline-pointer-none: ml-auto box-border inline-flex w-auto cursor-pointer items-center rounded-md border bg-primary px-2 py-1.5 text-sm leading-5 font-semibold text-primary-foreground shadow-xs transition-all duration-200 hover:bg-primary-foreground hover:text-primary"
+                        className="border-default-medium focus:outline-pointer-none text-body ml-auto box-border inline-flex w-auto cursor-pointer items-center rounded-md border bg-primary px-2 py-1.5 text-sm leading-5 font-semibold text-primary-foreground shadow-xs transition-all duration-200 hover:bg-primary-foreground hover:text-primary"
                     >
                         Create post
                     </Link>

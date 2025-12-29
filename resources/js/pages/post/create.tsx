@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import post, { store } from '@/routes/post';
-import { type BreadcrumbItem } from '@/types';
+import { Category, type BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/react';
 
 import InputError from '@/components/input-error';
@@ -23,11 +23,6 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: post.create().url,
     },
 ];
-
-interface Category {
-    id: number;
-    name: string;
-}
 
 export default function create({ categories }: { categories: Category[] }) {
     return (

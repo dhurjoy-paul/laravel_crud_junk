@@ -1,6 +1,6 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import post from '@/routes/post';
+import posts from '@/routes/posts';
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { Link } from '@inertiajs/react';
 
@@ -12,15 +12,15 @@ export function AppSidebarHeader({
     create_post?: boolean;
 }) {
     return (
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b border-sidebar-border/50 px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-4">
-            <div className="flex w-full items-center">
+        <header className="flex items-center gap-2 px-6 md:px-4 border-sidebar-border/50 border-b h-16 group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 transition-[width,height] ease-linear shrink-0">
+            <div className="flex items-center w-full">
                 <SidebarTrigger className="-ml-1" />
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
                 {create_post && (
                     <Link
-                        href={post.create().url}
+                        href={posts.create().url}
                         type="button"
-                        className="border-default-medium focus:outline-pointer-none text-body ml-auto box-border inline-flex w-auto cursor-pointer items-center rounded-md border bg-primary px-2 py-1.5 text-sm leading-5 font-semibold text-primary-foreground shadow-xs transition-all duration-200 hover:bg-primary-foreground hover:text-primary"
+                        className="inline-flex box-border items-center bg-primary hover:bg-primary-foreground shadow-xs ml-auto px-2 py-1.5 border border-default-medium rounded-md focus:outline-pointer-none w-auto font-semibold text-body text-primary-foreground hover:text-primary text-sm leading-5 transition-all duration-200 cursor-pointer"
                     >
                         Create post
                     </Link>

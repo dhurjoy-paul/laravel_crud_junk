@@ -16,6 +16,7 @@ class Post extends Model
         'content',
         'user_id',
         'category_id',
+        'category_name',
         'published_at'
     ];
 }

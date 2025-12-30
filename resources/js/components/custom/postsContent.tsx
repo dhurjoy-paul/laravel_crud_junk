@@ -1,9 +1,10 @@
-import post from '@/routes/post';
+// import post from '@/routes/post';
+import posts from '@/routes/posts';
 import { PaginatedData, Post } from '@/types';
 import { Link, router } from '@inertiajs/react';
 
 export default function PostsContent({
-    posts,
+    posts: totalPosts,
     grid,
     actions,
 }: {
@@ -35,38 +36,38 @@ export default function PostsContent({
     return (
         <div className={`grid gap-6 ${gridClass}`}>
             {/* {console.log(post.update().url + `/?postId=$${p.id}`)} */}
-            {posts?.data.length > 0 ? (
-                posts.data.map((p) => (
+            {totalPosts?.data.length > 0 ? (
+                totalPosts.data.map((p) => (
                     <div
                         key={p.id + p.title}
-                        className="group relative flex flex-col overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md md:flex-row"
+                        className="group relative flex md:flex-row flex-col bg-card shadow-sm hover:shadow-md border rounded-xl overflow-hidden text-card-foreground transition-all"
                     >
                         {/* Image Section */}
-                        <div className="h-48 w-full overflow-hidden md:h-auto md:w-64">
+                        <div className="w-full md:w-64 h-48 md:h-auto overflow-hidden">
                             <img
                                 src={`/storage/${p.image}`}
                                 alt={p.title}
-                                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                         </div>
 
                         {/* Content Section */}
-                        <div className="flex flex-1 flex-col p-5">
+                        <div className="flex flex-col flex-1 p-5">
                             <div className="flex-1">
                                 <Link href={p.slug}>
-                                    <h3 className="mb-2 text-xl font-semibold tracking-tight decoration-primary underline-offset-4 hover:underline">
+                                    <h3 className="mb-2 font-semibold text-xl decoration-primary hover:underline underline-offset-4 tracking-tight">
                                         {p.title}
                                     </h3>
                                 </Link>
-                                <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
+                                <p className="mb-4 text-muted-foreground text-sm line-clamp-2">
                                     {p.content}
                                 </p>
                             </div>
 
-                            <div className="mt-auto flex items-center justify-between border-t border-border/50 pt-4">
+                            <div className="flex justify-between items-center mt-auto pt-4 border-border/50 border-t">
                                 <Link
                                     href={p.slug}
-                                    className="text-sm font-medium text-primary hover:underline"
+                                    className="font-medium text-primary text-sm hover:underline"
                                 >
                                     Read more ➺
                                 </Link>
@@ -74,15 +75,15 @@ export default function PostsContent({
                                 {actions && (
                                     <div className="flex items-center gap-2">
                                         <Link
-                                            href={post.edit(p.id).url}
-                                            className="inline-flex items-center justify-center rounded-md border bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
+                                            href={posts.edit(p.id).url}
+                                            className="inline-flex justify-center items-center bg-secondary hover:bg-secondary/80 px-3 py-1.5 border rounded-md font-medium text-secondary-foreground text-xs transition-colors"
                                         >
                                             Edit
                                         </Link>
                                         <button
                                             onClick={() => handleDelete(p.id)}
                                             type="button"
-                                            className="inline-flex items-center justify-center rounded-md bg-destructive/10 px-3 py-1.5 text-xs font-medium text-destructive-foreground transition-all hover:bg-destructive hover:text-destructive-foreground"
+                                            className="inline-flex justify-center items-center bg-destructive/10 hover:bg-destructive px-3 py-1.5 rounded-md font-medium text-destructive-foreground hover:text-destructive-foreground text-xs transition-all"
                                         >
                                             Delete
                                         </button>
@@ -93,7 +94,7 @@ export default function PostsContent({
                     </div>
                 ))
             ) : (
-                <div className="rounded-xl border-2 border-dashed py-20 text-center">
+                <div className="py-20 border-2 border-dashed rounded-xl text-center">
                     <p className="font-medium text-muted-foreground">
                         No posts found.
                     </p>

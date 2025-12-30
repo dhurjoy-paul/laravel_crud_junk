@@ -21,7 +21,7 @@ export default function Welcome({
 }) {
     const { auth } = usePage<SharedData>().props;
     const postItems = posts.data;
-    console.log(posts);
+    // console.log(posts);
     return (
         <>
             <Head title="Welcome">
@@ -31,27 +31,27 @@ export default function Welcome({
                     rel="stylesheet"
                 />
             </Head>
-            <div className="flex min-h-screen flex-col items-center bg-background p-6 text-foreground lg:p-8">
-                <header className="mb-6 flex w-full max-w-[335px] items-center justify-between gap-5 text-sm not-has-[nav]:hidden lg:max-w-4xl">
+            <div className="flex flex-col items-center bg-background p-6 lg:p-8 min-h-screen text-foreground">
+                <header className="not-has-[nav]:hidden flex justify-between items-center gap-5 mb-6 w-full max-w-[335px] lg:max-w-4xl text-sm">
                     {/* app logo */}
                     <Link
-                        href={home()}
+                        href={home({})}
                         prefetch
-                        className="mr-3 flex shrink-0 items-center"
+                        className="flex items-center mr-3 shrink-0"
                     >
                         <AppLogo />
                     </Link>
 
-                    <div className="flex w-full items-center">
+                    <div className="flex items-center w-full">
                         <Search filters={filters} />
                     </div>
 
                     {/* nav links */}
-                    <nav className="flex shrink-0 items-center justify-end gap-4">
+                    <nav className="flex justify-end items-center gap-4 shrink-0">
                         {auth.user ? (
                             <Link
                                 href={dashboard()}
-                                className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                                className="inline-block px-5 py-1.5 border border-[#19140035] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-[#1b1b18] dark:text-[#EDEDEC] text-sm leading-normal"
                             >
                                 Dashboard
                             </Link>
@@ -59,14 +59,14 @@ export default function Welcome({
                             <>
                                 <Link
                                     href={login()}
-                                    className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                                    className="inline-block px-5 py-1.5 border border-[#19140035] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-[#1b1b18] dark:text-[#EDEDEC] text-sm leading-normal"
                                 >
                                     Log in
                                 </Link>
                                 {canRegister && (
                                     <Link
                                         href={register()}
-                                        className="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
+                                        className="inline-block px-5 py-1.5 border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-[#1b1b18] dark:text-[#EDEDEC] text-sm leading-normal"
                                     >
                                         Register
                                     </Link>

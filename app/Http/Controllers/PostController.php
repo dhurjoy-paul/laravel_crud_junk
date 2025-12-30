@@ -90,6 +90,7 @@ class PostController extends Controller
         unset($data['image']);
         $imagePath = $image->store('posts', 'public');
 
+        $data['category_name'] = Category::find($data['category_id'])->name;
         $data['image'] = $imagePath;
         $data['user_id'] = Auth::id();
         $data['slug'] = Str::slug($data['title']);
@@ -99,14 +100,6 @@ class PostController extends Controller
         return redirect()->route('posts');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    // App\Http\Controllers\PostController.php
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Post $post)
     {
         if ($post->user_id !== Auth::id()) {
@@ -154,6 +147,16 @@ class PostController extends Controller
     }
 
     public function destroy(Post $post)
+    {
+        if ($post->user_id !== Auth::id()) {
+            abort(403);
+        }
+        $post->delete();
+        return redirect()->back()->with('message', 'Post deleted successfully');
+    }
+
+    // for bulk delete
+    public function bulkDestroy(Post $post)
     {
         if ($post->user_id !== Auth::id()) {
             abort(403);

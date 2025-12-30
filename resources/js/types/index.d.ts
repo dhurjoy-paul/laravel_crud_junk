@@ -14,6 +14,7 @@ interface Post {
     title: string;
     content: string;
     category_id: number;
+    category_name: string;
     user_id: number;
 
     published_at: string;

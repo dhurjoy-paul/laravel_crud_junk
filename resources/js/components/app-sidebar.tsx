@@ -12,16 +12,9 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard, home } from '@/routes';
 import posts from '@/routes/posts';
-import tables from '@/routes/tables';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import {
-    BookOpen,
-    BookOpenText,
-    Folder,
-    LayoutGrid,
-    Table2,
-} from 'lucide-react';
+import { BookOpen, BookOpenText, Folder, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -34,11 +27,6 @@ const mainNavItems: NavItem[] = [
         title: 'Posts',
         href: posts.index(),
         icon: BookOpenText,
-    },
-    {
-        title: 'Table',
-        href: tables.index(),
-        icon: Table2,
     },
 ];
 

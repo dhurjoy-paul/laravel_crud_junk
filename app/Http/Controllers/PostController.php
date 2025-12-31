@@ -97,7 +97,7 @@ class PostController extends Controller
 
         Post::create($data);
 
-        return redirect()->route('posts');
+        return redirect()->route('posts.index');
     }
 
     public function edit(Post $post)
@@ -121,15 +121,13 @@ class PostController extends Controller
             abort(403);
         }
 
-        $rules = [
+        $data = $request->validate([
             'title' => 'required',
             'content' => 'required',
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,svg,gif', 'max:2048'],
             'category_id' => ['required', 'exists:categories,id'],
             'published_at' => ['nullable', 'date'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,svg,gif', 'max:2048'],
-        ];
-
-        $data = $request->validate($rules);
+        ]);
 
         // Handle Image if uploaded
         if ($request->hasFile('image')) {
@@ -138,12 +136,12 @@ class PostController extends Controller
         } else {
             unset($data['image']);
         }
-
+        $data['category_name'] = Category::find($data['category_id'])->name;
         $data['slug'] = Str::slug($data['title']);
 
         $post->update($data);
 
-        return redirect()->route('posts')->with('message', 'Post updated successfully');
+        return redirect()->route('posts.index')->with('message', 'Post updated successfully');
     }
 
     public function destroy(Post $post)
@@ -156,13 +154,19 @@ class PostController extends Controller
     }
 
     // for bulk delete
-    public function bulkDestroy(Post $post)
+    public function bulkDestroy(Request $request, Post $post)
     {
-        if ($post->user_id !== Auth::id()) {
-            abort(403);
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            return back()->withErrors('No posts selected.');
         }
-        $post->delete();
-        return redirect()->back()->with('message', 'Post deleted successfully');
+
+        Post::whereIn('id', $ids)
+            ->where('user_id', Auth::id())
+            ->delete();
+
+        return back()->with('message', 'Posts deleted successfully');
     }
 
     /**

@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import postRoute from '@/routes/post';
+import posts from '@/routes/posts';
 import { Category, Post, type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react'; //
 
@@ -35,7 +35,7 @@ export default function Edit({
     const {
         data,
         setData,
-        post: submit,
+        put: submit,
         processing,
         errors,
     } = useForm<PostForm>({
@@ -43,17 +43,21 @@ export default function Edit({
         content: post.content,
         category_id: post.category_id.toString(),
         image: null,
-        _method: 'POST',
+        _method: '',
     });
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Update post', href: postRoute.edit(post.id).url },
+        { title: 'Update post', href: posts.update(post.id).url },
     ];
+    // // function submit(e) {
+    // const handleSubmit = (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     put(route('posts.update', post.id));
+    // };
 
-    // 2. Handle the submission manually
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        submit(postRoute.update(post.id).url);
+        submit(posts.update(post.id).url);
     };
 
     return (
@@ -69,6 +73,11 @@ export default function Edit({
                     </div>
                 </div>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                    {/* <form
+                    // action={`posts/${post.id}`}
+                    className="flex flex-col gap-6"
+                    method="post"
+                > */}
                     <div className="grid gap-6">
                         {/* Title Field */}
                         <div className="grid gap-2">

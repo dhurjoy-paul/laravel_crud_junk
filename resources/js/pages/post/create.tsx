@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import post, { store } from '@/routes/post';
+// import post, { store } from '@/routes/post';
 import { Category, type BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/react';
 
@@ -16,11 +16,12 @@ import {
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
+import posts from '@/routes/posts';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Create post',
-        href: post.create().url,
+        href: posts.create().url,
     },
 ];
 
@@ -48,8 +49,14 @@ export default function create({ categories }: { categories: Category[] }) {
                             </p>
                         </div>
                     </div>
-
-                    <Form {...store.post()} className="flex flex-col gap-6">
+                    <Form
+                        // action={posts.store().url}
+                        // action={route('posts.store')}
+                        // {...store.post()}
+                        method="post"
+                        action="/posts"
+                        className="flex flex-col gap-6"
+                    >
                         {({ processing, errors }) => (
                             <>
                                 <div className="grid gap-6">

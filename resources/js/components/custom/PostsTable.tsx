@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox'; // Ensure you have this shadcn component
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     Table,
     TableBody,
@@ -12,15 +12,13 @@ import {
 import posts from '@/routes/posts';
 import { PaginatedData, Post } from '@/types';
 import { Link, router } from '@inertiajs/react';
+import { PencilLine, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 export default function PostsTable({
     posts: allPosts,
-    actions = true,
 }: {
     posts: PaginatedData<Post>;
-    grid?: number;
-    actions?: boolean;
 }) {
     const [selectedIds, setSelectedIds] = useState<(string | number)[]>([]);
 
@@ -66,10 +64,10 @@ export default function PostsTable({
 
     return (
         <div className="space-y-4">
-            {/* 2. Bulk Action Toolbar */}
+            {/* bulk delete toolbar */}
             {selectedIds.length > 0 && (
-                <div className="flex justify-between items-center bg-muted/50 slide-in-from-top-1 p-2 px-4 border rounded-lg animate-in fade-in">
-                    <span className="font-medium text-sm">
+                <div className="flex animate-in items-center justify-between rounded-lg border bg-muted/50 p-2 px-4 fade-in slide-in-from-top-1">
+                    <span className="text-sm font-medium">
                         {selectedIds.length} items selected
                     </span>
                     <div className="flex gap-2">
@@ -91,11 +89,11 @@ export default function PostsTable({
                 </div>
             )}
 
-            <div className="border rounded-md w-full">
+            {/* main table */}
+            <div className="w-full rounded-md border">
                 <Table>
                     <TableHeader className="bg-muted/50">
                         <TableRow>
-                            {/* 3. Checkbox Header */}
                             <TableHead className="w-[50px] text-center">
                                 <Checkbox
                                     checked={
@@ -104,21 +102,22 @@ export default function PostsTable({
                                         allPosts.data.length > 0
                                     }
                                     onCheckedChange={toggleSelectAll}
+                                    className="cursor-pointer border-2 border-foreground"
                                 />
                             </TableHead>
                             <TableHead className="font-semibold">
                                 Title
                             </TableHead>
-                            <TableHead className="hidden md:table-cell font-semibold text-center">
+                            <TableHead className="hidden text-center font-semibold md:table-cell">
                                 Status
                             </TableHead>
-                            <TableHead className="hidden lg:table-cell font-semibold text-center">
+                            <TableHead className="hidden text-center font-semibold lg:table-cell">
                                 Category
                             </TableHead>
-                            <TableHead className="hidden lg:table-cell font-semibold text-center">
+                            <TableHead className="hidden text-center font-semibold lg:table-cell">
                                 Content
                             </TableHead>
-                            <TableHead className="font-semibold text-center">
+                            <TableHead className="text-center font-semibold">
                                 Actions
                             </TableHead>
                         </TableRow>
@@ -131,9 +130,9 @@ export default function PostsTable({
                                     key={p.id}
                                     className={`transition-colors ${selectedIds.includes(p.id) ? 'bg-muted/50' : 'hover:bg-muted/30'}`}
                                 >
-                                    {/* 4. Checkbox Cell */}
                                     <TableCell className="text-center">
                                         <Checkbox
+                                            className="cursor-pointer border-[1.5px] border-foreground"
                                             checked={selectedIds.includes(p.id)}
                                             onCheckedChange={() =>
                                                 toggleSelectRow(p.id)
@@ -143,7 +142,7 @@ export default function PostsTable({
                                     <TableCell className="font-medium">
                                         {p.title}
                                     </TableCell>
-                                    <TableCell className="hidden md:table-cell text-center">
+                                    <TableCell className="hidden text-center md:table-cell">
                                         <Badge
                                             variant={
                                                 p.published_at
@@ -156,7 +155,7 @@ export default function PostsTable({
                                                 : 'Draft'}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell className="hidden lg:table-cell text-center">
+                                    <TableCell className="hidden text-center lg:table-cell">
                                         <Badge
                                             variant="outline"
                                             className="font-normal capitalize"
@@ -165,45 +164,45 @@ export default function PostsTable({
                                         </Badge>
                                     </TableCell>
 
-                                    <TableCell className="hidden lg:table-cell text-center">
+                                    <TableCell className="hidden text-center lg:table-cell">
                                         <p>{p.content}</p>
                                     </TableCell>
-                                    {actions && (
-                                        <TableCell>
-                                            <div className="flex justify-center gap-2">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    asChild
+
+                                    {/* actions */}
+                                    <TableCell>
+                                        <div className="flex justify-center gap-1.5">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                asChild
+                                            >
+                                                <Link
+                                                    href={posts.edit(p.id).url}
                                                 >
-                                                    <Link
-                                                        href={
-                                                            posts.edit(p.id).url
-                                                        }
-                                                    >
-                                                        Edit
-                                                    </Link>
-                                                </Button>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="hover:bg-destructive/50 text-destructive-foreground hover:text-destructive-foreground"
-                                                    onClick={() =>
-                                                        handleDelete(p.id)
-                                                    }
-                                                >
-                                                    Delete
-                                                </Button>
-                                            </div>
-                                        </TableCell>
-                                    )}
+                                                    {' '}
+                                                    <PencilLine />
+                                                </Link>
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="text-destructive-foreground hover:bg-destructive/50 hover:text-destructive-foreground"
+                                                onClick={() =>
+                                                    handleDelete(p.id)
+                                                }
+                                            >
+                                                <Trash2 />
+                                            </Button>
+                                        </div>
+                                    </TableCell>
                                 </TableRow>
                             ))
                         ) : (
                             <TableRow>
                                 <TableCell
+                                    // should not be hardcoded
                                     colSpan={6}
-                                    className="h-24 text-muted-foreground text-center"
+                                    className="h-24 text-center text-muted-foreground"
                                 >
                                     No posts found.
                                 </TableCell>

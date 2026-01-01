@@ -1,16 +1,31 @@
 import { router } from '@inertiajs/react';
+import { X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Input } from '../ui/input';
 
-export default function Search({ filters }: { filters: any }) {
-    const searchedText = filters?.search ?? '';
+export default function Search({
+    filters,
+    paramName = 'search',
+    placeholder,
+    routeName,
+}: {
+    filters: any;
+    paramName?: string;
+    placeholder?: string;
+    routeName?: string;
+}) {
+    const searchedText = filters?.[paramName] ?? '';
     const [value, setValue] = useState(searchedText);
     const lastSentValue = useRef(searchedText);
 
     useEffect(() => {
         setValue(searchedText);
         lastSentValue.current = searchedText;
-    }, [filters?.search]);
+    }, [searchedText]);
+
+    const handleClear = () => {
+        setValue('');
+    };
 
     useEffect(() => {
         if (value === lastSentValue.current) return;
@@ -19,10 +34,10 @@ export default function Search({ filters }: { filters: any }) {
             lastSentValue.current = value;
 
             router.get(
-                window.location.pathname,
+                routeName || window.location.pathname,
                 {
                     ...filters,
-                    search: value || undefined,
+                    [paramName]: value || undefined,
                     page: 1,
                 },
                 {
@@ -37,18 +52,26 @@ export default function Search({ filters }: { filters: any }) {
     }, [value]);
 
     return (
-        <div className="w-full">
+        <div className="relative w-full">
+            {' '}
             <Input
                 type="text"
-                placeholder={
-                    filters?.category
-                        ? 'Search in this category...'
-                        : 'Search all posts...'
-                }
+                placeholder={placeholder || `Search ${paramName}...`}
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                className="w-full rounded-md border px-3 py-2 text-sm"
+                className="w-full rounded-md border pr-10"
             />
+            {/* clear btn */}
+            {value && (
+                <button
+                    onClick={handleClear}
+                    type="button"
+                    className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer rounded-full p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                    aria-label="Clear search"
+                >
+                    <X className="h-4 w-4" />
+                </button>
+            )}
         </div>
     );
 }

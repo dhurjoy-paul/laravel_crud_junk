@@ -24,6 +24,17 @@ export default function Posts({
     posts: PaginatedData<Post>;
     filters?: any;
 }) {
+    const PostModule = {
+        module_name: 'Posts',
+        fields: [
+            { name: 'Title', input_type: 'text' },
+            { name: 'Status', input_type: 'text', style: 'border-1' },
+            { name: 'Category', input_type: 'text', style: 'border-2' },
+            { name: 'Content', input_type: 'text' },
+        ],
+        route_name: '/posts',
+        model_name: 'Post',
+    };
     return (
         <AppLayout breadcrumbs={breadcrumbs} create_post={true}>
             <Head title="Posts" />
@@ -35,10 +46,17 @@ export default function Posts({
                         filters={filters}
                         currentCategory={filters?.category}
                     />
-                    <Search filters={filters} />
+
+                    {/* reusable search component */}
+                    <Search
+                        filters={filters}
+                        paramName="search"
+                        placeholder="Search posts..."
+                    />
                 </div>
 
-                <PostsTable posts={allPosts} grid={2} actions />
+                {/* main table */}
+                <PostsTable posts={allPosts} />
 
                 {/* reusable pagination component */}
                 <Pagination meta={allPosts} />

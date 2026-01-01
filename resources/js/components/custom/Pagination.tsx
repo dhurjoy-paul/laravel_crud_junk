@@ -55,17 +55,46 @@ export default function Pagination({ meta }: PaginationProps) {
         );
     };
 
+    const getOrdinal = (n: number) => {
+        const s = ['th', 'st', 'nd', 'rd'];
+        const v = n % 100;
+        return s[(v - 20) % 10] || s[v] || s[0];
+    };
+
     return (
         <div className="flex flex-col items-center justify-between gap-4 border-t px-2 py-4 sm:flex-row">
             {/* results */}
             <div className="text-sm text-muted-foreground">
-                Showing &nbsp;
-                <span className="font-medium text-foreground">{from ?? 0}</span>
-                &nbsp;{' - '}&nbsp;
-                <span className="font-medium text-foreground">{to ?? 0}</span>
-                &nbsp;{' of '}&nbsp;
-                <span className="font-medium text-foreground">{total}</span>
-                &nbsp; results
+                {total > 0 ? (
+                    <>
+                        Showing &nbsp;
+                        {from != null && to != null && (
+                            <span className="font-medium text-foreground">
+                                {from === to ? (
+                                    total === 1 ? (
+                                        '1'
+                                    ) : (
+                                        <>
+                                            {from}
+                                            {getOrdinal(from)}
+                                        </>
+                                    )
+                                ) : (
+                                    <>
+                                        {from} &nbsp;{'-'}&nbsp; {to}
+                                    </>
+                                )}
+                            </span>
+                        )}
+                        &nbsp;{' of '}&nbsp;
+                        <span className="font-medium text-foreground">
+                            {total}
+                        </span>
+                        &nbsp; results
+                    </>
+                ) : (
+                    'No results found'
+                )}
             </div>
 
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6">

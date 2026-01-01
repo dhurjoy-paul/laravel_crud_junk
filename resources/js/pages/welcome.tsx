@@ -43,7 +43,12 @@ export default function Welcome({
                     </Link>
 
                     <div className="flex w-full items-center">
-                        <Search filters={filters} />
+                        {/* reusable search component */}
+                        <Search
+                            filters={filters}
+                            paramName="search"
+                            placeholder="Search posts..."
+                        />
                     </div>
 
                     {/* nav links */}
@@ -83,6 +88,7 @@ export default function Welcome({
                     />
                     <PostsContent posts={posts} grid={1} />
 
+                    {/* reusable pagination component */}
                     <Pagination meta={posts} />
                 </Container>
             </div>

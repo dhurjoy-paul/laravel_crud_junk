@@ -38,10 +38,9 @@ export default function Posts({
                     <Search filters={filters} />
                 </div>
 
-                {/* posts */}
-                {/* <PostsContent posts={posts} grid={2} actions /> */}
                 <PostsTable posts={allPosts} grid={2} actions />
 
+                {/* reusable pagination component */}
                 <Pagination meta={allPosts} />
             </div>
         </AppLayout>

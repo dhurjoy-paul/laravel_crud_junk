@@ -21,7 +21,7 @@ export default function Welcome({
 }) {
     const { auth } = usePage<SharedData>().props;
     const postItems = posts.data;
-    // console.log(posts);
+
     return (
         <>
             <Head title="Welcome">
@@ -81,12 +81,9 @@ export default function Welcome({
                         filters={filters}
                         currentCategory={filters?.category}
                     />
-                    {/* <div className="flex justify-between items-center mb-4 w-full">
-                        <Search filters={filters} />
-                    </div> */}
                     <PostsContent posts={posts} grid={1} />
 
-                    <Pagination links={posts.links} />
+                    <Pagination meta={posts} />
                 </Container>
             </div>
         </>

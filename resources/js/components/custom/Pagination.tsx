@@ -39,6 +39,14 @@ export default function Pagination({ meta }: PaginationProps) {
         last_page,
     } = meta;
 
+    const renderLabel = (label: string) => {
+        if (label.includes('Previous'))
+            return <ChevronLeft className="h-4 w-4" />;
+        if (label.includes('Next')) return <ChevronRight className="h-4 w-4" />;
+        if (label === '...') return <MoreHorizontal className="h-4 w-4" />;
+        return label;
+    };
+
     const handlePerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         router.get(
             meta.path,
@@ -49,7 +57,7 @@ export default function Pagination({ meta }: PaginationProps) {
 
     return (
         <div className="flex flex-col items-center justify-between gap-4 border-t px-2 py-4 sm:flex-row">
-            {/* Results Info */}
+            {/* results */}
             <div className="text-sm text-muted-foreground">
                 Showing &nbsp;
                 <span className="font-medium text-foreground">{from ?? 0}</span>
@@ -61,7 +69,7 @@ export default function Pagination({ meta }: PaginationProps) {
             </div>
 
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
-                {/* Rows Per Page */}
+                {/* rows per page */}
                 <div className="flex items-center gap-2">
                     <p className="text-sm font-medium whitespace-nowrap">
                         Rows per page
@@ -83,9 +91,9 @@ export default function Pagination({ meta }: PaginationProps) {
                     </select>
                 </div>
 
-                {/* Navigation Controls */}
+                {/* navigation */}
                 <nav className="flex items-center space-x-1">
-                    {/* First Page Button */}
+                    {/* first page btn */}
                     <Link
                         href={first_page_url || '#'}
                         preserveScroll
@@ -94,23 +102,12 @@ export default function Pagination({ meta }: PaginationProps) {
                         <ChevronsLeft className="h-4 w-4" />
                     </Link>
 
+                    {/* pages btns */}
                     {links.map((link, i) => {
+                        const labelContent = renderLabel(link.label);
                         const isPrev = link.label.includes('Previous');
                         const isNext = link.label.includes('Next');
                         const isEllipsis = link.label === '...';
-
-                        let content: React.ReactNode = (
-                            <span
-                                dangerouslySetInnerHTML={{ __html: link.label }}
-                            />
-                        );
-
-                        if (isPrev)
-                            content = <ChevronLeft className="h-4 w-4" />;
-                        if (isNext)
-                            content = <ChevronRight className="h-4 w-4" />;
-                        if (isEllipsis)
-                            content = <MoreHorizontal className="h-4 w-4" />;
 
                         return (
                             <Link
@@ -123,12 +120,12 @@ export default function Pagination({ meta }: PaginationProps) {
                                         : 'border-input bg-background hover:bg-accent hover:text-accent-foreground'
                                 } ${!link.url || isEllipsis ? 'pointer-events-none opacity-50' : ''} ${isPrev || isNext ? 'px-2' : ''} `}
                             >
-                                {content}
+                                {labelContent}
                             </Link>
                         );
                     })}
 
-                    {/* Last Page Button */}
+                    {/* last page btn */}
                     <Link
                         href={last_page_url || '#'}
                         preserveScroll

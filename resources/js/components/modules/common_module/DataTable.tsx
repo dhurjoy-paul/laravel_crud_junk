@@ -9,7 +9,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Link, router } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import { PencilLine, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -17,13 +17,13 @@ export interface ModuleField {
     name: string; // table header & form labels
     key: string; // this is DB column name ('published_at', 'title')
     input_type: 'text' | 'email' | 'number' | 'date' | 'select' | 'textarea';
-    css_style?: string; // Custom CSS classes
-    custom_style?: string | 'badge'; // Custom name style
+    css_style?: string; // custom CSS classes
+    custom_style?: string | 'badge'; // custom name style
 }
 
 export interface ModuleConfig {
     module_name: string; // Posts
-    route_name: string; // '/posts'
+    route_name: string; // '/posts'  // also have to make a method like /posts/bulk
     model_name: string; // Post
     fields: ModuleField[];
 }
@@ -31,9 +31,11 @@ export interface ModuleConfig {
 export default function DataTable({
     config,
     allData,
+    onEdit,
 }: {
     config: ModuleConfig;
     allData: any;
+    onEdit: any;
 }) {
     const [selectedIds, setSelectedIds] = useState<(string | number)[]>([]);
     const rows = allData?.data || [];
@@ -182,13 +184,11 @@ export default function DataTable({
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                asChild
+                                                onClick={() => onEdit?.(row)}
                                             >
-                                                <Link
-                                                    href={`${config.route_name}/${row.id}/edit`}
-                                                >
-                                                    <PencilLine className="h-4 w-4" />
-                                                </Link>
+                                                <PencilLine />
+                                                {/* <Link href={`${config.route_name}/${row.id}/edit`}> */}
+                                                {/* </Link> */}
                                             </Button>
                                             <Button
                                                 variant="ghost"

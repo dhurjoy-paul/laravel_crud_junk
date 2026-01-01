@@ -27,7 +27,7 @@ export default function Posts({
     return (
         <AppLayout breadcrumbs={breadcrumbs} create_post={true}>
             <Head title="Posts" />
-            <div className="flex flex-col flex-1 gap-4 p-4 rounded-xl h-full overflow-x-auto">
+            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 {/* tabs */}
                 <div className="mx-auto mb-4 w-full max-w-fit">
                     <CategoryFilter
@@ -42,7 +42,7 @@ export default function Posts({
                 {/* <PostsContent posts={posts} grid={2} actions /> */}
                 <PostsTable posts={allPosts} grid={2} actions />
 
-                <Pagination links={allPosts.links} />
+                <Pagination meta={allPosts} />
             </div>
         </AppLayout>
     );

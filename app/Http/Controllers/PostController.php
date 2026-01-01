@@ -17,6 +17,8 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
+        $perPage = $request->input('per_page', 5);
+
         $posts = Post::where('user_id', Auth::id())
             ->when($request->input('search'), function ($query, $search) {
                 $query->where(function ($q) use ($search) {
@@ -28,13 +30,14 @@ class PostController extends Controller
                 $query->where('category_id', $categoryId);
             })
             ->latest()
-            ->paginate(6)
-            ->withQueryString();
+            ->paginate($perPage)
+            ->withQueryString()
+            ->onEachSide(1);
 
         return Inertia::render('posts', [
             'categories' => Category::all(),
             'posts' => $posts,
-            'filters' => $request->only(['search', 'category']),
+            'filters' => $request->only(['search', 'category', 'per_page']),
         ]);
     }
 

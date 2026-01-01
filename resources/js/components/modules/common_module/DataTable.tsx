@@ -9,25 +9,45 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import posts from '@/routes/posts';
-import { PaginatedData, Post } from '@/types';
 import { Link, router } from '@inertiajs/react';
 import { PencilLine, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-export default function PostsTable({
-    posts: allPosts,
+export interface ModuleField {
+    name: string; // table header & form labels
+    key: string; // this is DB column name ('published_at', 'title')
+    input_type: 'text' | 'email' | 'number' | 'date' | 'select' | 'textarea';
+    css_style?: string; // Custom CSS classes
+    custom_style?: string | 'badge'; // Custom name style
+}
+
+export interface ModuleConfig {
+    module_name: string; // Posts
+    route_name: string; // '/posts'
+    model_name: string; // Post
+    fields: ModuleField[];
+}
+
+export default function DataTable({
+    config,
+    allData,
 }: {
-    posts: PaginatedData<Post>;
+    config: ModuleConfig;
+    allData: any;
 }) {
     const [selectedIds, setSelectedIds] = useState<(string | number)[]>([]);
+    const rows = allData?.data || [];
 
     const toggleSelectAll = () => {
-        if (selectedIds.length === allPosts.data.length) {
-            setSelectedIds([]);
-        } else {
-            setSelectedIds(allPosts.data.map((p) => p.id));
-        }
+        const currentPageIds = rows.map((r: any) => r.id);
+        const allSelected = currentPageIds.every((id: any) =>
+            selectedIds.includes(id),
+        );
+        setSelectedIds((prev) =>
+            allSelected
+                ? prev.filter((id) => !currentPageIds.includes(id))
+                : [...new Set([...prev, ...currentPageIds])],
+        );
     };
 
     const toggleSelectRow = (id: string | number) => {
@@ -39,23 +59,27 @@ export default function PostsTable({
     };
 
     const handleBulkDelete = () => {
-        const message = `Are you sure you want to delete ${selectedIds.length} posts?`;
+        const message = `Are you sure you want to delete ${selectedIds.length} ${config?.module_name.toLowerCase()}?`;
 
         if (confirm(message)) {
-            router.delete('/posts/bulk', {
+            router.delete(`${config?.route_name}/bulk`, {
                 data: { ids: selectedIds },
                 onSuccess: () => {
                     setSelectedIds([]);
-                    alert('Posts deleted!');
+                    alert(`${config.module_name} deleted successfully!`);
                 },
             });
         }
     };
 
-    const handleDelete = (postId: string | number) => {
-        if (confirm('Are you sure you want to delete this post?')) {
-            router.delete(`/posts/${postId}`, {
-                onSuccess: () => alert('Post deleted!'),
+    const handleDelete = (id: string | number) => {
+        if (
+            confirm(
+                `Are you sure you want to delete this ${config.model_name.toLowerCase()}?`,
+            )
+        ) {
+            router.delete(`${config?.route_name}/${id}`, {
+                onSuccess: () => alert('Deleted successfully!'),
             });
         }
     };
@@ -66,13 +90,13 @@ export default function PostsTable({
             {selectedIds.length > 0 && (
                 <div className="flex animate-in items-center justify-between rounded-lg border bg-muted/50 p-2 px-4 fade-in slide-in-from-top-1">
                     <span className="text-sm font-medium">
-                        {selectedIds.length} items selected
+                        {selectedIds.length} {config.module_name} selected
                     </span>
                     <div className="flex gap-2">
                         <Button
                             variant="destructive"
                             size="sm"
-                            onClick={handleBulkDelete}
+                            onClick={() => handleBulkDelete()}
                         >
                             Delete Selected
                         </Button>
@@ -88,33 +112,32 @@ export default function PostsTable({
             )}
 
             {/* main table */}
-            <div className="w-full rounded-md border">
+            <div className="w-full overflow-hidden rounded-md border">
                 <Table>
                     <TableHeader className="bg-muted/50">
                         <TableRow>
                             <TableHead className="w-[50px] text-center">
                                 <Checkbox
                                     checked={
-                                        selectedIds.length ===
-                                            allPosts.data.length &&
-                                        allPosts.data.length > 0
+                                        rows.length > 0 &&
+                                        rows.every((r: any) =>
+                                            selectedIds.includes(r.id),
+                                        )
                                     }
                                     onCheckedChange={toggleSelectAll}
                                     className="cursor-pointer border-2 border-foreground"
                                 />
                             </TableHead>
-                            <TableHead className="font-semibold">
-                                Title
-                            </TableHead>
-                            <TableHead className="hidden text-center font-semibold">
-                                Status
-                            </TableHead>
-                            <TableHead className="hidden text-center font-semibold">
-                                Category
-                            </TableHead>
-                            <TableHead className="hidden text-center font-semibold">
-                                Content
-                            </TableHead>
+
+                            {config.fields.map((field, index) => (
+                                <TableHead
+                                    key={field.key}
+                                    className={`font-semibold ${index === 0 ? 'text-left' : 'text-center'}`}
+                                >
+                                    {field.name}
+                                </TableHead>
+                            ))}
+
                             <TableHead className="text-center font-semibold">
                                 Actions
                             </TableHead>
@@ -122,49 +145,36 @@ export default function PostsTable({
                     </TableHeader>
 
                     <TableBody>
-                        {allPosts?.data.length > 0 ? (
-                            allPosts.data.map((p) => (
+                        {rows.length > 0 ? (
+                            rows.map((row: any) => (
                                 <TableRow
-                                    key={p.id}
-                                    className={`transition-colors ${selectedIds.includes(p.id) ? 'bg-muted/50' : 'hover:bg-muted/30'}`}
+                                    key={row.id}
+                                    className={`transition-colors ${selectedIds.includes(row.id) ? 'bg-muted/50' : 'hover:bg-muted/30'}`}
                                 >
                                     <TableCell className="text-center">
                                         <Checkbox
                                             className="cursor-pointer border-[1.5px] border-foreground"
-                                            checked={selectedIds.includes(p.id)}
+                                            checked={selectedIds.includes(
+                                                row.id,
+                                            )}
                                             onCheckedChange={() =>
-                                                toggleSelectRow(p.id)
+                                                toggleSelectRow(row.id)
                                             }
                                         />
                                     </TableCell>
-                                    <TableCell className="font-medium">
-                                        {p.title}
-                                    </TableCell>
-                                    <TableCell className="hidden text-center md:table-cell">
-                                        <Badge
-                                            variant={
-                                                p.published_at
-                                                    ? 'secondary'
-                                                    : 'outline'
+
+                                    {config.fields.map((field, index) => (
+                                        <TableCell
+                                            key={field.key}
+                                            className={
+                                                index === 0
+                                                    ? 'text-left'
+                                                    : 'text-center'
                                             }
                                         >
-                                            {p.published_at
-                                                ? 'Published'
-                                                : 'Draft'}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell className="hidden text-center lg:table-cell">
-                                        <Badge
-                                            variant="outline"
-                                            className="font-normal capitalize"
-                                        >
-                                            {p.category_name}
-                                        </Badge>
-                                    </TableCell>
-
-                                    <TableCell className="hidden text-center lg:table-cell">
-                                        <p>{p.content}</p>
-                                    </TableCell>
+                                            {renderCell(field, row)}
+                                        </TableCell>
+                                    ))}
 
                                     {/* actions */}
                                     <TableCell>
@@ -175,10 +185,9 @@ export default function PostsTable({
                                                 asChild
                                             >
                                                 <Link
-                                                    href={posts.edit(p.id).url}
+                                                    href={`${config.route_name}/${row.id}/edit`}
                                                 >
-                                                    {' '}
-                                                    <PencilLine />
+                                                    <PencilLine className="h-4 w-4" />
                                                 </Link>
                                             </Button>
                                             <Button
@@ -186,10 +195,10 @@ export default function PostsTable({
                                                 size="sm"
                                                 className="text-destructive-foreground hover:bg-destructive/50 hover:text-destructive-foreground"
                                                 onClick={() =>
-                                                    handleDelete(p.id)
+                                                    handleDelete(row.id)
                                                 }
                                             >
-                                                <Trash2 />
+                                                <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div>
                                     </TableCell>
@@ -198,11 +207,10 @@ export default function PostsTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    // should not be hardcoded
-                                    colSpan={6}
+                                    colSpan={config.fields.length + 2}
                                     className="h-24 text-center text-muted-foreground"
                                 >
-                                    No posts found.
+                                    No {config.module_name.toLowerCase()} found.
                                 </TableCell>
                             </TableRow>
                         )}
@@ -211,4 +219,18 @@ export default function PostsTable({
             </div>
         </div>
     );
+}
+
+function renderCell(field: ModuleField, row: any) {
+    const value = row[field.key];
+
+    if (field.custom_style === 'badge') {
+        return (
+            <Badge variant="outline" className={field.css_style}>
+                {value}
+            </Badge>
+        );
+    }
+
+    return <span className={field.css_style}>{value}</span>;
 }

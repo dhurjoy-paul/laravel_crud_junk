@@ -1,9 +1,12 @@
 import CategoryFilter from '@/components/custom/categoryFilter';
 import Pagination from '@/components/custom/Pagination';
-import PostsTable from '@/components/custom/PostsTable';
 import Search from '@/components/custom/search';
 import AppLayout from '@/layouts/app-layout';
 import posts from '@/routes/posts';
+
+import DataTable, {
+    ModuleConfig,
+} from '@/components/modules/common_module/DataTable';
 
 import { Category, PaginatedData, Post, type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
@@ -24,16 +27,26 @@ export default function Posts({
     posts: PaginatedData<Post>;
     filters?: any;
 }) {
-    const PostModule = {
+    const PostModule: ModuleConfig = {
         module_name: 'Posts',
-        fields: [
-            { name: 'Title', input_type: 'text' },
-            { name: 'Status', input_type: 'text', style: 'border-1' },
-            { name: 'Category', input_type: 'text', style: 'border-2' },
-            { name: 'Content', input_type: 'text' },
-        ],
         route_name: '/posts',
         model_name: 'Post',
+        fields: [
+            { name: 'Title', key: 'title', input_type: 'text' },
+            {
+                name: 'Status',
+                key: 'status',
+                input_type: 'text',
+                custom_style: 'badge',
+            },
+            {
+                name: 'Category',
+                key: 'category_name',
+                input_type: 'text',
+                custom_style: 'badge',
+            },
+            { name: 'Content', key: 'content', input_type: 'textarea' },
+        ],
     };
     return (
         <AppLayout breadcrumbs={breadcrumbs} create_post={true}>
@@ -56,7 +69,9 @@ export default function Posts({
                 </div>
 
                 {/* main table */}
-                <PostsTable posts={allPosts} />
+                {/* <PostsTable posts={allPosts} /> */}
+
+                <DataTable config={PostModule} allData={allPosts} />
 
                 {/* reusable pagination component */}
                 <Pagination meta={allPosts} />

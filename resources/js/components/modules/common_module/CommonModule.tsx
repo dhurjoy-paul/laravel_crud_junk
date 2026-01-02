@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
-import posts from '@/routes/posts';
-import { Category, PaginatedData, Post, type BreadcrumbItem } from '@/types';
+import { Category, PaginatedData } from '@/types';
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -11,75 +10,34 @@ import DataTable from '@/components/modules/common_module/DataTable';
 import FormDrawer from '@/components/modules/common_module/FormDrawer';
 import Pagination from '@/components/modules/common_module/Pagination';
 import Search from '@/components/modules/common_module/Search';
-import { ModuleConfig } from '@/components/modules/common_module/types';
+import { ModuleConfig } from './types';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Posts',
-        href: posts.index().url,
-    },
-];
-
-export default function Posts({
+export default function CommonModule({
+    module,
     categories,
-    posts: allPosts,
+    items: allItems,
     filters,
 }: {
-    categories: Category[];
-    posts: PaginatedData<Post>;
+    module: ModuleConfig;
+    categories: Category[]; // should not be hardcoded
+    items: PaginatedData<any>;
     filters?: any;
 }) {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [editingPost, setEditingPost] = useState<Post | null>(null);
+    const [editingItem, setEditingItem] = useState<any | null>(null);
 
-    const handleEditClick = (post: Post) => {
-        setEditingPost(post);
+    const handleEditClick = (item: any) => {
+        setEditingItem(item);
         setIsDrawerOpen(true);
     };
 
     const handleCreateClick = () => {
-        setEditingPost(null);
+        setEditingItem(null);
         setIsDrawerOpen(true);
     };
 
-    const PostModule: ModuleConfig = {
-        module_name: 'Posts',
-        route_name: '/posts',
-        model_name: 'Post',
-        fields: [
-            { name: 'Title', key: 'title', input_type: 'text', form_sn: 1 },
-            {
-                name: 'Status',
-                key: 'status',
-                input_type: 'text',
-                custom_style: 'badge',
-                form_hide: true,
-            },
-            {
-                name: 'Category',
-                key: 'category_name',
-                input_type: 'select',
-                custom_style: 'badge',
-                form_sn: 2,
-            },
-            {
-                name: 'Content',
-                key: 'content',
-                input_type: 'textarea',
-                form_sn: 3,
-            },
-            {
-                name: 'Image',
-                key: 'image',
-                input_type: 'file',
-                form_sn: 4,
-                table_hide: true,
-            },
-        ],
-    };
-
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout>
             <Head title="Posts" />
             <div className="flex flex-col flex-1 gap-4 p-4 rounded-xl h-full overflow-x-auto">
                 {/* tabs */}
@@ -104,21 +62,21 @@ export default function Posts({
 
                 {/* reusable table component */}
                 <DataTable
-                    config={PostModule}
-                    allData={allPosts}
+                    config={module}
+                    allData={allItems}
                     onEdit={handleEditClick}
                 />
 
                 {/* reusable pagination component */}
-                <Pagination meta={allPosts} />
+                <Pagination meta={allItems} />
             </div>
 
             {/* reusable from drawer for both edit and create */}
             <FormDrawer
                 open={isDrawerOpen}
                 onOpenChange={setIsDrawerOpen}
-                module={PostModule}
-                item={editingPost} // one row like post
+                module={module}
+                item={editingItem} // one row like post
                 categories={categories}
             />
         </AppLayout>

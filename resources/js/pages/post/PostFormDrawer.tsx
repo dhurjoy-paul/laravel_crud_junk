@@ -93,7 +93,7 @@ export default function PostFormDrawer({
             <SheetContent className="flex flex-col gap-0 p-0 sm:max-w-md">
                 {/* Header: Clean & Weighted */}
                 <SheetHeader className="p-6 text-left">
-                    <SheetTitle className="text-xl font-bold">
+                    <SheetTitle className="font-bold text-xl">
                         {post ? 'Edit Post' : 'New Post'}
                     </SheetTitle>
                     <SheetDescription>
@@ -106,7 +106,7 @@ export default function PostFormDrawer({
                 <Separator />
 
                 {/* Form Body: Consistent Spacing */}
-                <div className="flex-1 overflow-y-auto px-6 py-4">
+                <div className="flex-1 px-6 py-4 overflow-y-auto">
                     <form
                         id="drawer-form"
                         onSubmit={handleSubmit}
@@ -115,7 +115,7 @@ export default function PostFormDrawer({
                         <div className="space-y-2">
                             <Label
                                 htmlFor="title"
-                                className="text-sm font-medium"
+                                className="font-medium text-sm"
                             >
                                 Title
                             </Label>
@@ -134,7 +134,7 @@ export default function PostFormDrawer({
                         <div className="space-y-2">
                             <Label
                                 htmlFor="category"
-                                className="text-sm font-medium"
+                                className="font-medium text-sm"
                             >
                                 Category
                             </Label>
@@ -165,7 +165,7 @@ export default function PostFormDrawer({
                         <div className="space-y-2">
                             <Label
                                 htmlFor="content"
-                                className="text-sm font-medium"
+                                className="font-medium text-sm"
                             >
                                 Content
                             </Label>
@@ -185,14 +185,14 @@ export default function PostFormDrawer({
                         <div className="space-y-2">
                             <Label
                                 htmlFor="image"
-                                className="text-sm font-medium"
+                                className="font-medium text-sm"
                             >
                                 Featured Image
                             </Label>
                             <Input
-                                required={!post}
                                 id="image"
                                 type="file"
+                                required={!post}
                                 className="bg-muted/30 py-2 text-xs"
                                 accept="image/jpeg,image/png,image/jpg,image/svg+xml,image/gif"
                                 onChange={handleFileChange}
@@ -209,7 +209,7 @@ export default function PostFormDrawer({
 
                 {/* Footer: Locked to Bottom */}
                 <SheetFooter className="bg-muted/10 p-6">
-                    <div className="flex w-full items-center gap-3">
+                    <div className="flex items-center gap-3 w-full">
                         <Button
                             variant="outline"
                             type="button"
@@ -226,7 +226,7 @@ export default function PostFormDrawer({
                         >
                             {processing ? (
                                 <div className="flex items-center gap-2">
-                                    <Spinner className="h-4 w-4" />
+                                    <Spinner className="w-4 h-4" />
                                     <span>Saving...</span>
                                 </div>
                             ) : post ? (

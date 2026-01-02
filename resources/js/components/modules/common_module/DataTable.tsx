@@ -12,21 +12,7 @@ import {
 import { router } from '@inertiajs/react';
 import { PencilLine, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-
-export interface ModuleField {
-    name: string; // table header & form labels
-    key: string; // this is DB column name ('published_at', 'title')
-    input_type: 'text' | 'email' | 'number' | 'date' | 'select' | 'textarea';
-    css_style?: string; // custom CSS classes
-    custom_style?: string | 'badge'; // custom name style
-}
-
-export interface ModuleConfig {
-    module_name: string; // Posts
-    route_name: string; // '/posts'  // also have to make a method like /posts/bulk
-    model_name: string; // Post
-    fields: ModuleField[];
-}
+import { ModuleConfig, ModuleField } from './types';
 
 export default function DataTable({
     config,
@@ -86,12 +72,14 @@ export default function DataTable({
         }
     };
 
+    const formFields = config.fields.filter((f) => !f.table_hide);
+
     return (
         <div className="space-y-4">
             {/* bulk delete toolbar */}
             {selectedIds.length > 0 && (
-                <div className="flex animate-in items-center justify-between rounded-lg border bg-muted/50 p-2 px-4 fade-in slide-in-from-top-1">
-                    <span className="text-sm font-medium">
+                <div className="flex justify-between items-center bg-muted/50 slide-in-from-top-1 p-2 px-4 border rounded-lg animate-in fade-in">
+                    <span className="font-medium text-sm">
                         {selectedIds.length} {config.module_name} selected
                     </span>
                     <div className="flex gap-2">
@@ -114,7 +102,7 @@ export default function DataTable({
             )}
 
             {/* main table */}
-            <div className="w-full overflow-hidden rounded-md border">
+            <div className="border rounded-md w-full overflow-hidden">
                 <Table>
                     <TableHeader className="bg-muted/50">
                         <TableRow>
@@ -127,11 +115,11 @@ export default function DataTable({
                                         )
                                     }
                                     onCheckedChange={toggleSelectAll}
-                                    className="cursor-pointer border-2 border-foreground"
+                                    className="border-2 border-foreground cursor-pointer"
                                 />
                             </TableHead>
 
-                            {config.fields.map((field, index) => (
+                            {formFields.map((field, index) => (
                                 <TableHead
                                     key={field.key}
                                     className={`font-semibold ${index === 0 ? 'text-left' : 'text-center'}`}
@@ -140,7 +128,7 @@ export default function DataTable({
                                 </TableHead>
                             ))}
 
-                            <TableHead className="text-center font-semibold">
+                            <TableHead className="font-semibold text-center">
                                 Actions
                             </TableHead>
                         </TableRow>
@@ -155,7 +143,7 @@ export default function DataTable({
                                 >
                                     <TableCell className="text-center">
                                         <Checkbox
-                                            className="cursor-pointer border-[1.5px] border-foreground"
+                                            className="border-[1.5px] border-foreground cursor-pointer"
                                             checked={selectedIds.includes(
                                                 row.id,
                                             )}
@@ -165,7 +153,7 @@ export default function DataTable({
                                         />
                                     </TableCell>
 
-                                    {config.fields.map((field, index) => (
+                                    {formFields.map((field, index) => (
                                         <TableCell
                                             key={field.key}
                                             className={
@@ -193,12 +181,12 @@ export default function DataTable({
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                className="text-destructive-foreground hover:bg-destructive/50 hover:text-destructive-foreground"
+                                                className="hover:bg-destructive/50 text-destructive-foreground hover:text-destructive-foreground"
                                                 onClick={() =>
                                                     handleDelete(row.id)
                                                 }
                                             >
-                                                <Trash2 className="h-4 w-4" />
+                                                <Trash2 className="w-4 h-4" />
                                             </Button>
                                         </div>
                                     </TableCell>
@@ -207,8 +195,8 @@ export default function DataTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={config.fields.length + 2}
-                                    className="h-24 text-center text-muted-foreground"
+                                    colSpan={formFields.length + 2}
+                                    className="h-24 text-muted-foreground text-center"
                                 >
                                     No {config.module_name.toLowerCase()} found.
                                 </TableCell>

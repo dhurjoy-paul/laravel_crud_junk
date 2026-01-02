@@ -73,10 +73,10 @@ class PostController extends Controller
      */
     public function create()
     {
-        $categories = Category::get();
-        return Inertia::render('post/create', [
-            'categories' => $categories,
-        ]);
+        // $categories = Category::get();
+        // return Inertia::render('post/create', [
+        //     'categories' => $categories,
+        // ]);
     }
 
     /**

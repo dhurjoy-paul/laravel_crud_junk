@@ -1,16 +1,6 @@
-import posts from '@/routes/posts';
-import { Category, PaginatedData, Post, type BreadcrumbItem } from '@/types';
-import { useState } from 'react';
-
 import CommonModule from '@/components/modules/common_module/CommonModule';
 import { ModuleConfig } from '@/components/modules/common_module/types';
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Posts',
-        href: posts.index().url,
-    },
-];
+import { Category, PaginatedData, Post } from '@/types';
 
 export default function Posts({
     categories,
@@ -21,19 +11,6 @@ export default function Posts({
     posts: PaginatedData<Post>;
     filters?: any;
 }) {
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [editingPost, setEditingPost] = useState<Post | null>(null);
-
-    const handleEditClick = (post: Post) => {
-        setEditingPost(post);
-        setIsDrawerOpen(true);
-    };
-
-    const handleCreateClick = () => {
-        setEditingPost(null);
-        setIsDrawerOpen(true);
-    };
-
     const PostModule: ModuleConfig = {
         module_name: 'Posts',
         route_name: '/posts',

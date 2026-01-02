@@ -1,4 +1,3 @@
-import { Category } from '@/types';
 import { router } from '@inertiajs/react';
 
 export default function CategoryFilter({
@@ -6,7 +5,7 @@ export default function CategoryFilter({
     currentCategory,
     filters,
 }: {
-    categories: Category[];
+    categories: any[];
     currentCategory?: string | number;
     filters: any;
 }) {
@@ -28,7 +27,7 @@ export default function CategoryFilter({
 
     return (
         <div className="mb-6">
-            <ul className="flex justify-center gap-2 text-sm font-medium">
+            <ul className="flex justify-center gap-2 font-medium text-sm">
                 <li>
                     <button
                         onClick={() => handleFilter(null)}

@@ -14,13 +14,11 @@ import {
     Sheet,
     SheetContent,
     SheetDescription,
-    SheetFooter,
     SheetHeader,
     SheetTitle,
 } from '@/components/ui/sheet';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
-import { Category } from '@/types';
 import { useForm } from '@inertiajs/react';
 import React, { useEffect } from 'react';
 import { ModuleConfig } from './types';
@@ -30,25 +28,13 @@ export default function FormDrawer({
     open,
     onOpenChange,
     item,
-    categories,
 }: {
     module: ModuleConfig;
     open: boolean;
     onOpenChange: (open: boolean) => void;
     item?: any | null;
-    categories: Category[];
 }) {
-    const form = useForm<Record<string, any>>({
-        ...module.fields.reduce(
-            (acc, field) => {
-                acc[field.key] = item ? (item as any)[field.key] : '';
-                return acc;
-            },
-            {} as Record<string, any>,
-        ),
-        category_id: item ? item.category_id.toString() : '',
-        _method: item ? 'PUT' : 'POST',
-    });
+    const foreignKey = `${module.filter_name}_id`;
 
     const {
         data,
@@ -58,29 +44,36 @@ export default function FormDrawer({
         errors,
         reset,
         clearErrors,
-    } = form;
+    } = useForm<Record<string, any>>({
+        ...module.fields.reduce(
+            (acc, field) => {
+                acc[field.key] = '';
+                return acc;
+            },
+            {} as Record<string, any>,
+        ),
+        [foreignKey]: '',
+        _method: 'POST',
+    });
 
-    const handleSetData = (key: string, value: any) => {
-        (setData as any)(key, value);
-    };
     useEffect(() => {
-        if (item) {
-            const editData: any = { _method: 'PUT' };
-
-            module.fields.forEach((field) => {
-                if (field.input_type === 'file') {
-                    editData[field.key] = null;
-                } else {
-                    editData[field.key] = (item as any)[field.key] || '';
-                }
-            });
-            editData.category_id = item.category_id?.toString() || '';
-
-            (setData as any)(editData);
-        } else {
-            (reset as any)();
+        if (open) {
+            if (item) {
+                const editData: any = { _method: 'PUT' };
+                module.fields.forEach((field) => {
+                    if (field.input_type === 'file') {
+                        editData[field.key] = null;
+                    } else {
+                        editData[field.key] = item[field.key] ?? '';
+                    }
+                });
+                editData[foreignKey] = item[foreignKey]?.toString() ?? '';
+                setData(editData);
+            } else {
+                reset();
+            }
+            clearErrors();
         }
-        (clearErrors as any)();
     }, [item, open]);
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -88,13 +81,18 @@ export default function FormDrawer({
         const url = item
             ? `${module.route_name}/${item.id}`
             : module.route_name;
+
         submitItem(url, {
             forceFormData: true,
             onSuccess: () => {
                 onOpenChange(false);
-                (reset as any)();
+                reset();
             },
         });
+    };
+
+    const handleValueChange = (key: string, value: any) => {
+        (setData as any)(key, value);
     };
 
     const formFields = module.fields
@@ -103,7 +101,7 @@ export default function FormDrawer({
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="flex flex-col gap-0 p-0 sm:max-w-md">
+            <SheetContent className="flex flex-col gap-0 p-0 sm:max-w-md overflow-y-auto">
                 <SheetHeader className="p-6 text-left">
                     <SheetTitle className="font-bold text-xl">
                         {item
@@ -111,126 +109,111 @@ export default function FormDrawer({
                             : `New ${module.model_name}`}
                     </SheetTitle>
                     <SheetDescription>
-                        {item
-                            ? 'Update existing content.'
-                            : `Fill out the form to create a new ${module.model_name.toLowerCase()}.`}
+                        Fill out the details below.
                     </SheetDescription>
                 </SheetHeader>
 
                 <Separator />
 
-                <div className="flex-1 px-6 py-4 overflow-y-auto">
+                <div className="flex-1 px-6 py-4">
                     <form
                         id="drawer-form"
                         onSubmit={handleSubmit}
-                        className="space-y-5"
+                        className="space-y-5 pb-24"
                     >
-                        {formFields.map((field) => (
-                            <div key={field.key} className="space-y-2">
-                                <Label
-                                    htmlFor={field.key}
-                                    className="font-medium text-sm"
-                                >
-                                    {field.name}
-                                </Label>
+                        {formFields.map((field) => {
+                            const isSelectField = field.input_type === 'select';
+                            const currentKey = isSelectField
+                                ? foreignKey
+                                : field.key;
 
-                                {field.key === 'category_name' ||
-                                field.key === 'category_id' ? (
-                                    <Select
-                                        value={data.category_id}
-                                        onValueChange={(val) =>
-                                            handleSetData('category_id', val)
-                                        }
-                                        required
+                            return (
+                                <div key={field.key} className="space-y-2">
+                                    <Label
+                                        htmlFor={field.key}
+                                        className="font-medium text-sm"
                                     >
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select Category" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {categories.map((cat) => (
-                                                <SelectItem
-                                                    key={cat.id}
-                                                    value={cat.id.toString()}
-                                                >
-                                                    {cat.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                ) : field.input_type === 'textarea' ? (
-                                    <Textarea
-                                        id={field.key}
-                                        className="min-h-[120px]"
-                                        value={data[field.key] || ''}
-                                        onChange={(e) =>
-                                            handleSetData(
-                                                field.key,
-                                                e.target.value,
-                                            )
-                                        }
-                                        required
-                                    />
-                                ) : field.input_type === 'file' ? (
-                                    <div className="space-y-2">
+                                        {field.name}
+                                    </Label>
+
+                                    {field.input_type === 'select' ? (
+                                        <Select
+                                            value={data[foreignKey]}
+                                            onValueChange={(val) =>
+                                                handleValueChange(
+                                                    foreignKey,
+                                                    val,
+                                                )
+                                            }
+                                        >
+                                            <SelectTrigger
+                                                id={field.key}
+                                                className="w-full"
+                                            >
+                                                <SelectValue
+                                                    placeholder={`Select ${field.name}`}
+                                                />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {field.options?.map(
+                                                    (opt: any) => (
+                                                        <SelectItem
+                                                            key={opt.id}
+                                                            value={opt.id.toString()}
+                                                        >
+                                                            {opt.name}
+                                                        </SelectItem>
+                                                    ),
+                                                )}
+                                            </SelectContent>
+                                        </Select>
+                                    ) : field.input_type === 'textarea' ? (
+                                        <Textarea
+                                            id={field.key}
+                                            value={data[field.key] || ''}
+                                            onChange={(e) =>
+                                                handleValueChange(
+                                                    field.key,
+                                                    e.target.value,
+                                                )
+                                            }
+                                            required
+                                        />
+                                    ) : field.input_type === 'file' ? (
                                         <Input
                                             id={field.key}
                                             type="file"
-                                            required={!item}
-                                            className="bg-muted/30 py-2 text-xs"
                                             accept="image/jpeg,image/png,image/jpg,image/svg+xml,image/gif"
-                                            onChange={(e) => {
-                                                const file =
-                                                    e.target.files?.[0] || null;
-
-                                                if (
-                                                    file &&
-                                                    file.size > 2048 * 1024
-                                                ) {
-                                                    alert(
-                                                        'File is too big! Max 2MB.',
-                                                    );
-                                                    e.target.value = '';
-                                                    handleSetData(
-                                                        field.key,
-                                                        null,
-                                                    );
-                                                    return;
-                                                }
-
-                                                handleSetData(field.key, file);
-                                            }}
+                                            onChange={(e) =>
+                                                handleValueChange(
+                                                    field.key,
+                                                    e.target.files?.[0] || null,
+                                                )
+                                            }
+                                            required={!item}
                                         />
-                                        <p className="text-[11px] text-muted-foreground">
-                                            {item
-                                                ? 'Optional: Leave empty to keep the current image.'
-                                                : 'Max size 2MB. Format: JPG, PNG, SVG, or GIF.'}
-                                        </p>
-                                    </div>
-                                ) : (
-                                    <Input
-                                        id={field.key}
-                                        type={field.input_type}
-                                        value={data[field.key] || ''}
-                                        onChange={(e) =>
-                                            handleSetData(
-                                                field.key,
-                                                e.target.value,
-                                            )
-                                        }
-                                        required
-                                    />
-                                )}
-                                <InputError
-                                    message={(errors as any)[field.key]}
-                                />
-                            </div>
-                        ))}
+                                    ) : (
+                                        <Input
+                                            id={field.key}
+                                            type={field.input_type}
+                                            value={data[field.key] || ''}
+                                            onChange={(e) =>
+                                                handleValueChange(
+                                                    field.key,
+                                                    e.target.value,
+                                                )
+                                            }
+                                            required
+                                        />
+                                    )}
+                                    <InputError message={errors[currentKey]} />
+                                </div>
+                            );
+                        })}
                     </form>
                 </div>
 
-                <Separator />
-
-                <SheetFooter className="bg-muted/10 p-6">
+                <div className="bottom-0 z-10 fixed bg-background p-6 border-t w-full sm:max-w-md">
                     <div className="flex items-center gap-3 w-full">
                         <Button
                             variant="outline"
@@ -247,18 +230,15 @@ export default function FormDrawer({
                             disabled={processing}
                         >
                             {processing ? (
-                                <div className="flex items-center gap-2">
-                                    <Spinner className="w-4 h-4" />
-                                    <span>Saving...</span>
-                                </div>
+                                <Spinner className="w-4 h-4" />
                             ) : item ? (
-                                'Save Changes'
+                                'Update'
                             ) : (
-                                `Create ${module.model_name}`
+                                'Create'
                             )}
                         </Button>
                     </div>
-                </SheetFooter>
+                </div>
             </SheetContent>
         </Sheet>
     );

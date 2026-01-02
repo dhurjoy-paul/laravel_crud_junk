@@ -6,6 +6,28 @@ interface Category {
     name: string;
 }
 
+interface Genre {
+    id: number;
+    name: string;
+}
+
+export interface Book {
+    id: number;
+    slug: string;
+    title: string;
+    author?: string | null;
+    isbn?: string | null;
+    description?: string | null;
+    price?: number | null;
+    quantity: number;
+    image?: string | null;
+    published_date?: string | Date | null;
+    genre_id?: number | null;
+    genre_name?: number | null;
+    created_at?: string | Date;
+    updated_at?: string | Date;
+}
+
 interface Post {
     id: number;
     slug: string;

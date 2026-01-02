@@ -1,15 +1,14 @@
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
-import { Category, PaginatedData } from '@/types';
+import { PaginatedData } from '@/types';
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
-
-import CategoryFilter from '@/components/custom/categoryFilter';
 
 import DataTable from '@/components/modules/common_module/DataTable';
 import FormDrawer from '@/components/modules/common_module/FormDrawer';
 import Pagination from '@/components/modules/common_module/Pagination';
 import Search from '@/components/modules/common_module/Search';
+import ReusableFilter from './ReusableFilter';
 import { ModuleConfig } from './types';
 
 export default function CommonModule({
@@ -19,7 +18,7 @@ export default function CommonModule({
     filters,
 }: {
     module: ModuleConfig;
-    categories: Category[]; // should not be hardcoded
+    categories: any[];
     items: PaginatedData<any>;
     filters?: any;
 }) {
@@ -38,14 +37,15 @@ export default function CommonModule({
 
     return (
         <AppLayout>
-            <Head title="Posts" />
+            <Head title={module.module_name} />
             <div className="flex flex-col flex-1 gap-4 p-4 rounded-xl h-full overflow-x-auto">
                 {/* tabs */}
                 <div className="mx-auto mb-2 w-full max-w-fit">
-                    <CategoryFilter
-                        categories={categories}
+                    <ReusableFilter
+                        items={categories}
+                        activeValue={filters.genre}
                         filters={filters}
-                        currentCategory={filters?.category}
+                        filterKey={module.filter_name}
                     />
                 </div>
 
@@ -54,10 +54,12 @@ export default function CommonModule({
                     <Search
                         filters={filters}
                         paramName="search"
-                        placeholder="Search posts..."
+                        placeholder={`Search ${module.module_name.toLowerCase()}...`}
                         className="max-w-sm"
                     />
-                    <Button onClick={handleCreateClick}>Create New Post</Button>
+                    <Button onClick={handleCreateClick}>
+                        Add New {module.model_name}
+                    </Button>
                 </div>
 
                 {/* reusable table component */}
@@ -76,8 +78,7 @@ export default function CommonModule({
                 open={isDrawerOpen}
                 onOpenChange={setIsDrawerOpen}
                 module={module}
-                item={editingItem} // one row like post
-                categories={categories}
+                item={editingItem}
             />
         </AppLayout>
     );

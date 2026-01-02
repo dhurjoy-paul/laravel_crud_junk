@@ -10,6 +10,7 @@ export interface ModuleField {
         | 'number'
         | 'date'
         | 'tel';
+    options?: any[]; // this is for category / genre
     css_style?: string; // custom CSS classes
     custom_style?: string | 'badge'; // custom name style
     form_sn?: number; // form input serial no
@@ -21,5 +22,6 @@ export interface ModuleConfig {
     module_name: string; // Posts
     route_name: string; // '/posts'  // also have to make a method like /posts/bulk
     model_name: string; // Post
+    filter_name?: string;
     fields: ModuleField[];
 }

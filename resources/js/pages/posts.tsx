@@ -1,16 +1,8 @@
-import { Button } from '@/components/ui/button';
-import AppLayout from '@/layouts/app-layout';
 import posts from '@/routes/posts';
 import { Category, PaginatedData, Post, type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
 import { useState } from 'react';
 
-import CategoryFilter from '@/components/custom/categoryFilter';
-
-import DataTable from '@/components/modules/common_module/DataTable';
-import FormDrawer from '@/components/modules/common_module/FormDrawer';
-import Pagination from '@/components/modules/common_module/Pagination';
-import Search from '@/components/modules/common_module/Search';
+import CommonModule from '@/components/modules/common_module/CommonModule';
 import { ModuleConfig } from '@/components/modules/common_module/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -46,6 +38,7 @@ export default function Posts({
         module_name: 'Posts',
         route_name: '/posts',
         model_name: 'Post',
+        filter_name: 'category',
         fields: [
             { name: 'Title', key: 'title', input_type: 'text', form_sn: 1 },
             {
@@ -60,6 +53,7 @@ export default function Posts({
                 key: 'category_name',
                 input_type: 'select',
                 custom_style: 'badge',
+                options: categories,
                 form_sn: 2,
             },
             {
@@ -79,48 +73,13 @@ export default function Posts({
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Posts" />
-            <div className="flex flex-col flex-1 gap-4 p-4 rounded-xl h-full overflow-x-auto">
-                {/* tabs */}
-                <div className="mx-auto mb-2 w-full max-w-fit">
-                    <CategoryFilter
-                        categories={categories}
-                        filters={filters}
-                        currentCategory={filters?.category}
-                    />
-                </div>
-
-                <div className="flex justify-between items-center mx-auto mb-4 w-full">
-                    {/* reusable search component */}
-                    <Search
-                        filters={filters}
-                        paramName="search"
-                        placeholder="Search posts..."
-                        className="max-w-sm"
-                    />
-                    <Button onClick={handleCreateClick}>Create New Post</Button>
-                </div>
-
-                {/* reusable table component */}
-                <DataTable
-                    config={PostModule}
-                    allData={allPosts}
-                    onEdit={handleEditClick}
-                />
-
-                {/* reusable pagination component */}
-                <Pagination meta={allPosts} />
-            </div>
-
-            {/* reusable from drawer for both edit and create */}
-            <FormDrawer
-                open={isDrawerOpen}
-                onOpenChange={setIsDrawerOpen}
+        <div>
+            <CommonModule
                 module={PostModule}
-                item={editingPost} // one row like post
+                filters={filters}
                 categories={categories}
+                items={allPosts}
             />
-        </AppLayout>
+        </div>
     );
 }

@@ -11,9 +11,12 @@ class PostController extends BaseResourceController
     protected $viewName = 'posts';
     protected $folderName = 'posts';
     protected $filterKey = 'category_id';
+    protected $filterName = 'category';
     protected $relationModel = Category::class;
     protected $relationName = 'categories';
     protected $searchable = ['title', 'content'];
+    protected $isUserId = true;
+    protected $slugColumn = 'title';
 
     protected function getValidationRules($id = null)
     {

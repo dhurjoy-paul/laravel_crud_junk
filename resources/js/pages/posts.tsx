@@ -13,11 +13,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Posts({
     categories,
-    posts: allPosts,
+    items: allPosts,
     filters,
 }: {
     categories: Category[];
-    posts: PaginatedData<Post>;
+    items: PaginatedData<Post>;
     filters?: any;
 }) {
     const PostModule: ModuleConfig = {

@@ -15,11 +15,14 @@ abstract class BaseResourceController extends Controller
   protected $viewName;       // 'posts'
   protected $folderName;     // 'posts' (for storage)
   protected $filterKey;      // 'category_id'
+  protected $filterName;      // 'category', 'genre'
   protected $relationModel;  // Category::class
   protected $relationName;   // 'categories' (for the frontend prop)
 
   protected $searchable = []; // ['title', 'content', 'isbn']
-  protected $relations = [];  // ['categories' => [\App\Models\Category::class, 'category_id']]
+
+  protected $isUserId; // boolean, if main table need/has user_id column
+  protected $slugColumn; // which column will create the slug? 'title', 'name', 'product_name'
 
   /**
    * Display a listing of the resource.
@@ -28,7 +31,7 @@ abstract class BaseResourceController extends Controller
   {
     $perPage = $request->input('per_page', 5);
     $search = $request->input('search');
-    $filterValue = $request->input($this->relationName === 'genres' ? 'genre' : 'category');
+    $filterValue = $request->input($this->filterName);
 
     $sortColumn = $request->input('column', 'created_at');
     $sortDirection = $request->input('sort', 'desc');
@@ -54,9 +57,9 @@ abstract class BaseResourceController extends Controller
     $items = $query->paginate($perPage)->withQueryString()->onEachSide(1);
 
     return Inertia::render($this->viewName, [
-      $this->relationName => $this->relationModel::all(),
-      str_replace('post', 'post', $this->viewName) => $items,
-      'filters' => $request->only(['search', 'per_page', 'category', 'genre']),
+      $this->relationName => ($this->relationModel && $this->relationName) ? $this->relationModel::all() : [],
+      'items' => $items,
+      'filters' => $request->only(['search', 'per_page', $this->filterName]),
     ]);
   }
 
@@ -76,12 +79,17 @@ abstract class BaseResourceController extends Controller
       $data[str_replace('_id', '_name', $this->filterKey)] = $relation->name;
     }
 
-    $data['user_id'] = Auth::id();
-    $data['slug'] = Str::slug($data['title']) . '-' . Str::random(5);
+    if ($this->isUserId) {
+      $data['user_id'] = Auth::id();
+    }
+
+    if ($this->slugColumn) {
+      $data['slug'] = Str::slug($data[$this->slugColumn]) . '-' . Str::random(5);
+    }
 
     $this->model::create($data);
 
-    return redirect()->back()->with('message', 'Created successfully');
+    return redirect()->route($this->viewName . '.index')->with('success', 'Created successfully.');
   }
 
   /**
@@ -91,7 +99,9 @@ abstract class BaseResourceController extends Controller
   {
     $item = $this->model::findOrFail($id);
 
-    // if (isset($item->user_id) && $item->user_id !== Auth::id()) abort(403);
+    if ($this->isUserId) {
+      if (isset($item->user_id) && $item->user_id !== Auth::id()) abort(403);
+    }
 
     $data = $request->validate($this->getValidationRules($id));
 
@@ -105,10 +115,13 @@ abstract class BaseResourceController extends Controller
       $data[str_replace('_id', '_name', $this->filterKey)] = $relation->name;
     }
 
-    $data['slug'] = Str::slug($data['title']);
+    if ($this->slugColumn) {
+      $data['slug'] = Str::slug($data[$this->slugColumn]) . '-' . Str::random(5);
+    }
+
     $item->update($data);
 
-    return redirect()->back()->with('message', 'Updated successfully');
+    return redirect()->route($this->viewName . '.index')->with('success', 'Updated successfully.');
   }
 
   /**

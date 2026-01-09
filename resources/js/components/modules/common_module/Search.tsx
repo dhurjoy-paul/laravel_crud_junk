@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { router } from '@inertiajs/react';
 import { X } from 'lucide-react';
@@ -53,27 +54,45 @@ export default function Search({
         return () => clearTimeout(searchDelayFn);
     }, [value]);
 
+    const handleClearFilters = () => {
+        router.get(
+            window.location.pathname,
+            {},
+            { replace: true, preserveScroll: true },
+        );
+    };
+
     return (
-        <div className={`relative w-full ${className}`}>
-            {' '}
-            <Input
-                type="text"
-                placeholder={placeholder || `Search ${paramName}...`}
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                className={`w-full rounded-md border pr-10`}
-            />
-            {/* clear btn */}
-            {value && (
-                <button
-                    onClick={handleClear}
-                    type="button"
-                    className="top-1/2 right-3 absolute hover:bg-accent p-1 rounded-full text-muted-foreground hover:text-foreground transition-colors -translate-y-1/2 cursor-pointer"
-                    aria-label="Clear search"
-                >
-                    <X className="w-4 h-4" />
-                </button>
-            )}
+        <div className="flex items-center gap-2 w-full">
+            <div className={`relative w-full ${className}`}>
+                {' '}
+                <Input
+                    type="text"
+                    placeholder={placeholder || `Search ${paramName}...`}
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                    className={`w-full rounded-md border pr-10`}
+                />
+                {/* clear btn */}
+                {value && (
+                    <button
+                        onClick={handleClear}
+                        type="button"
+                        className="top-1/2 right-3 absolute hover:bg-accent p-1 rounded-full text-muted-foreground hover:text-foreground transition-colors -translate-y-1/2 cursor-pointer"
+                        aria-label="Clear search"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
+                )}
+            </div>
+            <Button
+                onClick={handleClearFilters}
+                variant="secondary"
+                size="sm"
+                className="cursor-pointer"
+            >
+                Clear all filters
+            </Button>
         </div>
     );
 }

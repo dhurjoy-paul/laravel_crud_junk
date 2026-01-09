@@ -13,11 +13,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Books({
     genres,
-    books: allBooks,
+    items: allBooks,
     filters,
 }: {
     genres: Genre[];
-    books: PaginatedData<Book>;
+    items: PaginatedData<Book>;
     filters?: any;
 }) {
     const BookModule: ModuleConfig = {

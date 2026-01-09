@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import AppLayout from '@/layouts/app-layout';
 import { PaginatedData } from '@/types';
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
@@ -22,6 +21,8 @@ export default function CommonModule({
     items: PaginatedData<any>;
     filters?: any;
 }) {
+    const lowerCaseModuleName = module.module_name.toLowerCase();
+
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<any | null>(null);
 
@@ -36,7 +37,7 @@ export default function CommonModule({
     };
 
     return (
-        <AppLayout>
+        <>
             <Head title={module.module_name} />
             <div className="flex flex-col flex-1 gap-4 p-4 rounded-xl h-full overflow-x-auto">
                 {/* tabs */}
@@ -54,7 +55,7 @@ export default function CommonModule({
                     <Search
                         filters={filters}
                         paramName="search"
-                        placeholder={`Search ${module.module_name.toLowerCase()}...`}
+                        placeholder={`Search ${lowerCaseModuleName}...`}
                         className="max-w-sm"
                     />
                     <Button onClick={handleCreateClick}>
@@ -80,6 +81,6 @@ export default function CommonModule({
                 module={module}
                 item={editingItem}
             />
-        </AppLayout>
+        </>
     );
 }

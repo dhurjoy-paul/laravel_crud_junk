@@ -1,6 +1,15 @@
 import CommonModule from '@/components/modules/common_module/CommonModule';
 import { ModuleConfig } from '@/components/modules/common_module/types';
-import { Category, PaginatedData, Post } from '@/types';
+import AppLayout from '@/layouts/app-layout';
+import posts from '@/routes/posts';
+import { BreadcrumbItem, Category, PaginatedData, Post } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'All Posts',
+        href: posts.index().url,
+    },
+];
 
 export default function Posts({
     categories,
@@ -50,13 +59,15 @@ export default function Posts({
     };
 
     return (
-        <div>
-            <CommonModule
-                module={PostModule}
-                filters={filters}
-                categories={categories}
-                items={allPosts}
-            />
-        </div>
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <div>
+                <CommonModule
+                    module={PostModule}
+                    filters={filters}
+                    categories={categories}
+                    items={allPosts}
+                />
+            </div>
+        </AppLayout>
     );
 }

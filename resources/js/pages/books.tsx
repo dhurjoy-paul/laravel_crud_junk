@@ -1,8 +1,17 @@
 import CommonModule from '@/components/modules/common_module/CommonModule';
 import { ModuleConfig } from '@/components/modules/common_module/types';
-import { Book, Genre, PaginatedData } from '@/types';
+import AppLayout from '@/layouts/app-layout';
+import books from '@/routes/books';
+import { Book, BreadcrumbItem, Genre, PaginatedData } from '@/types';
 
-export default function books({
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'All Books',
+        href: books.index().url,
+    },
+];
+
+export default function Books({
     genres,
     books: allBooks,
     filters,
@@ -78,13 +87,15 @@ export default function books({
         ],
     };
     return (
-        <div>
-            <CommonModule
-                module={BookModule}
-                filters={filters}
-                categories={genres}
-                items={allBooks}
-            />
-        </div>
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <div>
+                <CommonModule
+                    module={BookModule}
+                    filters={filters}
+                    categories={genres}
+                    items={allBooks}
+                />
+            </div>
+        </AppLayout>
     );
 }

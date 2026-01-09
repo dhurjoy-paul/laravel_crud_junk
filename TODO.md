@@ -16,7 +16,9 @@
 
 - [ ] **Fake Filler Fix:** Resolve the glitch upon filling data with Fake Filler.
 - [ ] **Open Glitch:** Fix the bug occurring during the "Open" edit/add form.
-- [ ] **Latest Fixes:** Fix data organization with latest.
+- [x] **Latest Fixes:** Fix data organization with latest.
+- [ ] **Pagination Eclipse:** Have to add pagination eclipse. Only 3 pages will show.
+- [ ] **Redirect:** After Deletion should go back to ?page=1 when there is no data
 
 ---
 

@@ -18,6 +18,9 @@ abstract class BaseResourceController extends Controller
   protected $relationModel;  // Category::class
   protected $relationName;   // 'categories' (for the frontend prop)
 
+  protected $searchable = []; // ['title', 'content', 'isbn']
+  protected $relations = [];  // ['categories' => [\App\Models\Category::class, 'category_id']]
+
   /**
    * Display a listing of the resource.
    */
@@ -27,25 +30,19 @@ abstract class BaseResourceController extends Controller
     $search = $request->input('search');
     $filterValue = $request->input($this->relationName === 'genres' ? 'genre' : 'category');
 
-    $items = $this->model::query()
-      ->when($search, function ($query) use ($search) {
-        $query->where(function ($q) use ($search) {
-          $q->where('title', 'like', "%{$search}%");
-          if (Schema::hasColumn((new $this->model)->getTable(), 'content')) {
-            $q->orWhere('content', 'like', "%{$search}%");
-          }
-          if (Schema::hasColumn((new $this->model)->getTable(), 'description')) {
-            $q->orWhere('description', 'like', "%{$search}%");
+    $query = $this->model::query()
+      ->when($search, function ($q) use ($search) {
+        $q->where(function ($subQuery) use ($search) {
+          foreach ($this->searchable as $column) {
+            $subQuery->orWhere($column, 'like', "%{$search}%");
           }
         });
       })
       ->when($filterValue, function ($query) use ($filterValue) {
         $query->where($this->filterKey, $filterValue);
-      })
-      ->latest()
-      ->paginate($perPage)
-      ->withQueryString()
-      ->onEachSide(1);
+      });
+
+    $items = $query->latest()->paginate($perPage)->withQueryString()->onEachSide(1);
 
     return Inertia::render($this->viewName, [
       $this->relationName => $this->relationModel::all(),

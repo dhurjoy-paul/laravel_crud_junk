@@ -13,6 +13,7 @@ class PostController extends BaseResourceController
     protected $filterKey = 'category_id';
     protected $relationModel = Category::class;
     protected $relationName = 'categories';
+    protected $searchable = ['title', 'content'];
 
     protected function getValidationRules($id = null)
     {

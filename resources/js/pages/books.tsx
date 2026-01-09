@@ -41,7 +41,7 @@ export default function Books({
             {
                 name: 'ISBN',
                 key: 'isbn',
-                input_type: 'text',
+                input_type: 'number',
                 form_sn: 3,
                 sort: true,
             },

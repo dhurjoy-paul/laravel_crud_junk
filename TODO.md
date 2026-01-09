@@ -3,14 +3,14 @@
 ## 🚀 Core Features
 
 - [ ] **Slug-based RUD:** Enable Single Item Read, Update, and Delete using `slug`.
-- [ ] **Configurable Sorting:** Configure sorting with `ModuleConfig`.
-- [ ] **Generic Multi-Filter System:**
+- [x] **Configurable Sorting:** Implemented custom column-wise sorting, controlled by `ModuleConfig`
+- [x] **Custom Multi Search** Implemented custom multi search by base controller
+- [ ] **Generic Multi-Filter System:** _Example Case:_ Filter by Author Name + Genres.
+    - [x] Implement single generic filtering.
+    - [ ] For single filter multiple selection have to implement.
     - [ ] Implement multiple generic filtering.
     - [ ] Customize by `ModuleConfig`.
-    - [ ] _Example Case:_ Filter by Author Name + Genres.
-- [ ] **Controller Customization:** Implement a way to optionally override/customize controllers.
-- [x] **Multi Custom Column Search** Implemented custom multi column-wise search by base controller
-- [x] **Custom Column-wise Sorting** Implemented custom column-wise sorting, controlled by moduleConfig
+- [ ] **Controller Customization:** Find a way to optionally override/customize controllers.
 
 ---
 

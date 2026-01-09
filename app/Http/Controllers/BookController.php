@@ -23,11 +23,11 @@ class BookController extends BaseResourceController
         return [
             'title'          => ['required', 'string', 'max:255'],
             'author'         => ['nullable', 'string', 'max:255'],
-            'isbn'           => ['nullable', 'string', 'unique:books,isbn'],
+            'isbn'           => ['nullable', 'string', "unique:books,isbn,{$id}"],
             'description'    => ['nullable', 'string'],
             'price'          => ['nullable', 'numeric'],
             'quantity'       => ['required', 'integer', 'min:0'],
-            'image'          => ['required', 'image', 'mimes:jpeg,png,jpg,svg', 'max:2048'],
+            'image'          => $id ? ['nullable', 'image', 'mimes:jpeg,png,jpg,svg', 'max:2048'] : ['required', 'image', 'mimes:jpeg,png,jpg,svg', 'max:2048'],
             'genre_id'       => ['required', 'exists:genres,id'],
             'published_date' => ['nullable', 'date'],
         ];

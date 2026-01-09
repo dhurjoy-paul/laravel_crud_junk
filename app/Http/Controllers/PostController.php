@@ -23,7 +23,7 @@ class PostController extends BaseResourceController
         return [
             'title' => 'required|string|max:255',
             'content' => 'required',
-            'image' => $id ? ['nullable', 'image', 'max:2048'] : ['required', 'image', 'max:2048'],
+            'image' => $id ? ['nullable', 'image', 'mimes:jpeg,png,jpg,svg', 'max:2048'] : ['required', 'image', 'mimes:jpeg,png,jpg,svg', 'max:2048'],
             'category_id' => ['required', 'exists:categories,id'],
             'published_at' => ['nullable', 'date']
         ];

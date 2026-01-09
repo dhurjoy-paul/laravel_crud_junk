@@ -101,9 +101,9 @@ export default function FormDrawer({
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="flex flex-col gap-0 p-0 sm:max-w-md overflow-y-auto">
+            <SheetContent className="flex flex-col gap-0 overflow-y-auto p-0 sm:max-w-md">
                 <SheetHeader className="p-6 text-left">
-                    <SheetTitle className="font-bold text-xl">
+                    <SheetTitle className="text-xl font-bold">
                         {item
                             ? `Edit ${module.model_name}`
                             : `New ${module.model_name}`}
@@ -131,7 +131,7 @@ export default function FormDrawer({
                                 <div key={field.key} className="space-y-2">
                                     <Label
                                         htmlFor={field.key}
-                                        className="font-medium text-sm"
+                                        className="text-sm font-medium"
                                     >
                                         {field.name}
                                     </Label>
@@ -213,8 +213,8 @@ export default function FormDrawer({
                     </form>
                 </div>
 
-                <div className="bottom-0 z-10 fixed bg-background p-6 border-t w-full sm:max-w-md">
-                    <div className="flex items-center gap-3 w-full">
+                <div className="fixed bottom-0 z-10 w-full border-t bg-background p-6 sm:max-w-md">
+                    <div className="flex w-full items-center gap-3">
                         <Button
                             variant="outline"
                             type="button"
@@ -230,7 +230,7 @@ export default function FormDrawer({
                             disabled={processing}
                         >
                             {processing ? (
-                                <Spinner className="w-4 h-4" />
+                                <Spinner className="h-4 w-4" />
                             ) : item ? (
                                 'Update'
                             ) : (

@@ -9,8 +9,8 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { router } from '@inertiajs/react';
-import { PencilLine, Trash2 } from 'lucide-react';
+import { router, usePage } from '@inertiajs/react';
+import { ArrowUpDown, PencilLine, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { ModuleConfig, ModuleField } from './types';
 
@@ -18,10 +18,12 @@ export default function DataTable({
     config,
     allData,
     onEdit,
+    filters,
 }: {
     config: ModuleConfig;
     allData: any;
     onEdit: any;
+    filters: any;
 }) {
     const [selectedIds, setSelectedIds] = useState<(string | number)[]>([]);
     const rows = allData?.data || [];
@@ -70,6 +72,34 @@ export default function DataTable({
                 onSuccess: () => alert('Deleted successfully!'),
             });
         }
+    };
+
+    const { url } = usePage();
+
+    const handleSort = (columnKey: string) => {
+        const currentField = config.fields.find((f) => f.key === columnKey);
+        if (!currentField?.sort) return;
+
+        const params = new URLSearchParams(window.location.search);
+        const currentCol = params.get('column');
+        const currentSort = params.get('sort');
+
+        const newDirection =
+            currentCol === columnKey && currentSort === 'asc' ? 'desc' : 'asc';
+
+        router.get(
+            config.route_name,
+            {
+                ...filters,
+                column: columnKey,
+                sort: newDirection,
+            },
+            {
+                preserveState: true,
+                replace: true,
+                preserveScroll: true,
+            },
+        );
     };
 
     const formFields = config.fields.filter((f) => !f.table_hide);
@@ -124,7 +154,23 @@ export default function DataTable({
                                     key={field.key}
                                     className={`font-semibold ${index === 0 ? 'text-left' : 'text-center'}`}
                                 >
-                                    {field.name}
+                                    {field.sort ? (
+                                        <Button
+                                            onClick={() =>
+                                                handleSort(field.key)
+                                            }
+                                            variant="ghost"
+                                            className="flex justify-center items-center gap-2 mx-auto w-fit cursor-pointer"
+                                        >
+                                            <span>{field.name}</span>
+                                            <ArrowUpDown
+                                                size={14}
+                                                className="font-bold text-muted-foreground"
+                                            />
+                                        </Button>
+                                    ) : (
+                                        field.name
+                                    )}
                                 </TableHead>
                             ))}
 

@@ -9,6 +9,8 @@
     - [ ] Customize by `ModuleConfig`.
     - [ ] _Example Case:_ Filter by Author Name + Genres.
 - [ ] **Controller Customization:** Implement a way to optionally override/customize controllers.
+- [x] **Multi Custom Column Search** Implemented custom multi column-wise search by base controller
+- [x] **Custom Column-wise Sorting** Implemented custom column-wise sorting, controlled by moduleConfig
 
 ---
 
@@ -18,7 +20,7 @@
 - [ ] **Open Glitch:** Fix the bug occurring during the "Open" edit/add form.
 - [x] **Latest Fixes:** Fix data organization with latest.
 - [ ] **Pagination Eclipse:** Have to add pagination eclipse. Only 3 pages will show.
-- [ ] **Redirect:** After Deletion should go back to ?page=1 when there is no data
+- [ ] **Redirect:** When there is no data, after deletion should go back to ?page=1
 
 ---
 

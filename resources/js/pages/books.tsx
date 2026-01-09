@@ -43,6 +43,7 @@ export default function Books({
                 key: 'isbn',
                 input_type: 'text',
                 form_sn: 3,
+                sort: true,
             },
             {
                 name: 'Description',
@@ -56,12 +57,14 @@ export default function Books({
                 key: 'price',
                 input_type: 'number',
                 form_sn: 5,
+                sort: true,
             },
             {
                 name: 'Quantity',
                 key: 'quantity',
                 input_type: 'number',
                 form_sn: 6,
+                sort: true,
             },
             {
                 name: 'Cover Image',
@@ -75,6 +78,7 @@ export default function Books({
                 key: 'published_date',
                 input_type: 'date',
                 form_sn: 8,
+                sort: true,
             },
             {
                 name: 'Genre',

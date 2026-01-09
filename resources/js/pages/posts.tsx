@@ -28,11 +28,12 @@ export default function Posts({
         fields: [
             { name: 'Title', key: 'title', input_type: 'text', form_sn: 1 },
             {
-                name: 'Status',
-                key: 'status',
-                input_type: 'text',
+                name: 'ID',
+                key: 'id',
+                input_type: 'number',
                 custom_style: 'badge',
                 form_hide: true,
+                sort: true,
             },
             {
                 name: 'Category',

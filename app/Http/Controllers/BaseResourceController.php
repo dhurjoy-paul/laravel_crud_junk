@@ -30,6 +30,9 @@ abstract class BaseResourceController extends Controller
     $search = $request->input('search');
     $filterValue = $request->input($this->relationName === 'genres' ? 'genre' : 'category');
 
+    $sortColumn = $request->input('column', 'created_at');
+    $sortDirection = $request->input('sort', 'desc');
+
     $query = $this->model::query()
       ->when($search, function ($q) use ($search) {
         $q->where(function ($subQuery) use ($search) {
@@ -42,7 +45,13 @@ abstract class BaseResourceController extends Controller
         $query->where($this->filterKey, $filterValue);
       });
 
-    $items = $query->latest()->paginate($perPage)->withQueryString()->onEachSide(1);
+    if ($sortColumn) {
+      $query->orderBy($sortColumn, $sortDirection);
+    } else {
+      $query->latest();
+    }
+
+    $items = $query->paginate($perPage)->withQueryString()->onEachSide(1);
 
     return Inertia::render($this->viewName, [
       $this->relationName => $this->relationModel::all(),

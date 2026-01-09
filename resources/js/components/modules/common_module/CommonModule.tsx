@@ -68,6 +68,7 @@ export default function CommonModule({
                     config={module}
                     allData={allItems}
                     onEdit={handleEditClick}
+                    filters={filters}
                 />
 
                 {/* reusable pagination component */}

@@ -18,22 +18,29 @@ class BookController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 5);
+        $sortColumn = $request->input('column', 'created_at');
+        $sortDirection = $request->input('sort', 'desc');
 
-        $books = Book::when($request->input('search'), function ($query, $search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhere('author', 'like', "%{$search}%")
-                    ->orWhere('isbn', 'like', "%{$search}%");
-            });
-        })
+        $query = Book::query()
+            ->when($request->input('search'), function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%")
+                        ->orWhere('author', 'like', "%{$search}%")
+                        ->orWhere('isbn', 'like', "%{$search}%");
+                });
+            })
             ->when($request->input('genre'), function ($query, $genreId) {
                 $query->where('genre_id', $genreId);
-            })
-            ->latest()
-            ->paginate($perPage)
-            ->withQueryString()
-            ->onEachSide(1);
+            });
+
+        if ($sortColumn) {
+            $query->orderBy($sortColumn, $sortDirection);
+        } else {
+            $query->latest();
+        }
+
+        $books = $query->paginate($perPage)->withQueryString()->onEachSide(1);
 
         return Inertia::render('books', [
             'genres' => Genre::all(),

@@ -16,6 +16,7 @@ export interface ModuleField {
     form_sn?: number; // form input serial no
     table_hide?: boolean; // hide from table
     form_hide?: boolean; // hide from form
+    sort?: boolean; // true, if want sorting on column
 }
 
 export interface ModuleConfig {

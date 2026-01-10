@@ -10,13 +10,15 @@ class BookController extends BaseResourceController
     protected $model = Book::class;
     protected $viewName = 'books';
     protected $folderName = 'books';
+    protected $searchable = ['title', 'author', 'isbn', 'description'];
+
+    protected $isUserId = false;
+    protected $slugColumn = 'title';
+
     protected $filterKey = 'genre_id';
     protected $filterName = 'genre';
     protected $relationModel = Genre::class;
     protected $relationName = 'genres';
-    protected $searchable = ['title', 'author', 'isbn', 'description'];
-    protected $isUserId = false;
-    protected $slugColumn = 'title';
 
     protected function getValidationRules($id = null)
     {

@@ -14,15 +14,16 @@ abstract class BaseResourceController extends Controller
   protected $model;          // Post::class
   protected $viewName;       // 'posts'
   protected $folderName;     // 'posts' (for storage)
-  protected $filterKey;      // 'category_id'
-  protected $filterName;      // 'category', 'genre'
-  protected $relationModel;  // Category::class
-  protected $relationName;   // 'categories' (for the frontend prop)
-
   protected $searchable = []; // ['title', 'content', 'isbn']
 
-  protected $isUserId; // boolean, if main table need/has user_id column
+  protected $isUserId = false; // boolean, if database table need/has user_id column
   protected $slugColumn; // which column will create the slug? 'title', 'name', 'product_name'
+
+  protected $filterKey = null;      // (optional) 'category_id', 'genre_id'
+  protected $filterName = null;     // (optional) 'category', 'genre'
+  protected $relationModel = null;  // (optional) Category::class, Genre::class
+  protected $relationName = null;   // (optional) 'categories', 'genres' 
+                                    // (for the frontend prop)
 
   /**
    * Display a listing of the resource.
@@ -31,7 +32,7 @@ abstract class BaseResourceController extends Controller
   {
     $perPage = $request->input('per_page', 5);
     $search = $request->input('search');
-    $filterValue = $request->input($this->filterName);
+    $filterValue = $this->filterName ? $request->input($this->filterName) : null;
 
     $sortColumn = $request->input('column', 'created_at');
     $sortDirection = $request->input('sort', 'desc');
@@ -44,7 +45,7 @@ abstract class BaseResourceController extends Controller
           }
         });
       })
-      ->when($filterValue, function ($query) use ($filterValue) {
+      ->when(($this->filterName && $filterValue), function ($query) use ($filterValue) {
         $query->where($this->filterKey, $filterValue);
       });
 
@@ -56,11 +57,16 @@ abstract class BaseResourceController extends Controller
 
     $items = $query->paginate($perPage)->withQueryString()->onEachSide(1);
 
-    return Inertia::render($this->viewName, [
-      $this->relationName => ($this->relationModel && $this->relationName) ? $this->relationModel::all() : [],
+    $inertiaData = [
       'items' => $items,
       'filters' => $request->only(['search', 'per_page', $this->filterName]),
-    ]);
+    ];
+
+    if ($this->relationName && $this->relationModel) {
+      $inertiaData[$this->relationName] = $this->relationModel::all();
+    }
+
+    return Inertia::render($this->viewName, $inertiaData);
   }
 
   /**
@@ -74,10 +80,27 @@ abstract class BaseResourceController extends Controller
       $data['image'] = $request->file('image')->store($this->folderName, 'public');
     }
 
-    if (isset($data[$this->filterKey])) {
-      $relation = $this->relationModel::find($data[$this->filterKey]);
-      $data[str_replace('_id', '_name', $this->filterKey)] = $relation->name;
+    if ($this->filterKey && $this->relationModel) {
+      $columnName = str_replace('_id', '_name', $this->filterKey);
+
+      if (Schema::hasColumn((new $this->model)->getTable(), $columnName)) {
+        $relationId = $data[$this->filterKey] ?? null;
+
+        if ($relationId) {
+          $relation = $this->relationModel::find($relationId);
+          $data[$columnName] = $relation ? $relation->name : null;
+        } else {
+          $data[$columnName] = null;
+        }
+      }
     }
+
+    // if ($this->filterKey && $this->relationModel && isset($data[$this->filterKey])) {
+    //   $relation = $this->relationModel::find($data[$this->filterKey]);
+    //   if ($relation) {
+    //     $data[str_replace('_id', '_name', $this->filterKey)] = $relation->name;
+    //   }
+    // }
 
     if ($this->isUserId) {
       $data['user_id'] = Auth::id();
@@ -110,9 +133,19 @@ abstract class BaseResourceController extends Controller
       $data['image'] = $request->file('image')->store($this->folderName, 'public');
     }
 
-    if (isset($data[$this->filterKey])) {
-      $relation = $this->relationModel::find($data[$this->filterKey]);
-      $data[str_replace('_id', '_name', $this->filterKey)] = $relation->name;
+    if ($this->filterKey && $this->relationModel) {
+      $columnName = str_replace('_id', '_name', $this->filterKey);
+
+      if (Schema::hasColumn((new $this->model)->getTable(), $columnName)) {
+        $relationId = $data[$this->filterKey] ?? null;
+
+        if ($relationId) {
+          $relation = $this->relationModel::find($relationId);
+          $data[$columnName] = $relation ? $relation->name : null;
+        } else {
+          $data[$columnName] = null;
+        }
+      }
     }
 
     if ($this->slugColumn) {

@@ -11,13 +11,13 @@ use Inertia\Inertia;
 
 abstract class BaseResourceController extends Controller
 {
-  protected $model;          // Post::class
-  protected $viewName;       // 'posts'
-  protected $folderName;     // 'posts' (for storage)
-  protected $searchable = []; // ['title', 'content', 'isbn']
+  protected $model;                 // Post::class
+  protected $viewName;              // 'posts'
+  protected $folderName;            // 'posts' (for storage)
+  protected $searchable = [];       // ['title', 'content', 'isbn']
 
-  protected $isUserId = false; // boolean, if database table need/has user_id column
-  protected $slugColumn; // which column will create the slug? 'title', 'name', 'product_name'
+  protected $isUserId = false;      // boolean, if database table need/has user_id column
+  protected $slugColumn;            // which column will create the slug? 'title', 'name', 'product_name'
 
   protected $filterKey = null;      // (optional) 'category_id', 'genre_id'
   protected $filterName = null;     // (optional) 'category', 'genre'
@@ -99,13 +99,6 @@ abstract class BaseResourceController extends Controller
         }
       }
     }
-
-    // if ($this->filterKey && $this->relationModel && isset($data[$this->filterKey])) {
-    //   $relation = $this->relationModel::find($data[$this->filterKey]);
-    //   if ($relation) {
-    //     $data[str_replace('_id', '_name', $this->filterKey)] = $relation->name;
-    //   }
-    // }
 
     if ($this->isUserId) {
       $data['user_id'] = Auth::id();

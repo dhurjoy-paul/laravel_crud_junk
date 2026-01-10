@@ -1,14 +1,13 @@
 import { Button } from '@/components/ui/button';
-import { PaginatedData } from '@/types';
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
+import { ModuleConfig, PaginatedData } from './types';
 
 import DataTable from '@/components/modules/common_module/DataTable';
 import FormDrawer from '@/components/modules/common_module/FormDrawer';
 import Pagination from '@/components/modules/common_module/Pagination';
 import Search from '@/components/modules/common_module/Search';
 import ReusableFilter from './ReusableFilter';
-import { ModuleConfig } from './types';
 
 export default function CommonModule({
     module,
@@ -21,6 +20,7 @@ export default function CommonModule({
     items: PaginatedData<any>;
     filters?: any;
 }) {
+    const { data, ...meta } = allItems;
     const lowerCaseModuleName = module.module_name.toLowerCase();
 
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -41,7 +41,7 @@ export default function CommonModule({
     return (
         <>
             <Head title={module.module_name} />
-            <div className="flex flex-col flex-1 gap-4 p-4 rounded-xl h-full overflow-x-auto">
+            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 {/* filter tabs */}
                 {filter && (
                     <div className="mx-auto mb-2 w-full max-w-fit">
@@ -54,7 +54,7 @@ export default function CommonModule({
                     </div>
                 )}
 
-                <div className="flex justify-between items-center mx-auto mb-4 w-full">
+                <div className="mx-auto mb-4 flex w-full items-center justify-between">
                     {/* reusable search component */}
                     <Search
                         filters={filters}
@@ -62,7 +62,12 @@ export default function CommonModule({
                         placeholder={`Search ${lowerCaseModuleName}...`}
                         className="max-w-sm"
                     />
-                    <Button onClick={handleCreateClick}>
+                    <Button
+                        variant="default"
+                        size="sm"
+                        className="cursor-pointer"
+                        onClick={handleCreateClick}
+                    >
                         Add New {module.model_name}
                     </Button>
                 </div>
@@ -76,7 +81,7 @@ export default function CommonModule({
                 />
 
                 {/* reusable pagination component */}
-                <Pagination meta={allItems} />
+                <Pagination meta={meta} />
             </div>
 
             {/* reusable from drawer for both edit and create */}

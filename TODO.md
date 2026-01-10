@@ -1,5 +1,9 @@
 # 📋 Development To-Do List
 
+## ToDo
+
+- [x] **Delete Extra Unwanted Components** `resources/js/components/custom/*`
+
 ## 🚀 Core Features
 
 - [ ] **Slug-based RUD:** Enable Single Item Read, Update, and Delete using `slug`.
@@ -20,7 +24,7 @@
 - [ ] **Fake Filler Fix:** Resolve the glitch upon filling data with Fake Filler.
 - [ ] **Open Glitch:** Fix the bug occurring during the "Open" edit/add form.
 - [x] **Latest Fixes:** Fix data organization with latest.
-- [ ] **Pagination Eclipse:** Have to add pagination eclipse. Only 3 pages will show.
+- [x] **Pagination Eclipse:** Have to add pagination eclipse. Only 3 pages will show.
 - [ ] **Redirect:** When there is no data, after deletion should go back to ?page=1
 
 ---

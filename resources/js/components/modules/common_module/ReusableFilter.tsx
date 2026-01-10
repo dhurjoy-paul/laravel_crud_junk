@@ -1,11 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { router } from '@inertiajs/react';
-// import { FilterItem } from './types';
-
-export interface FilterItem {
-    id: number;
-    name: string;
-}
+import { FilterItem } from './types';
 
 interface ReusableFilterProps {
     items: FilterItem[];
@@ -22,15 +17,12 @@ export default function ReusableFilter({
     filterKey,
     allLabel = 'All',
 }: ReusableFilterProps) {
-    // console.log(activeValue);
-
     const activeIds = activeValue
         ? String(activeValue)
               .split(',')
               .filter((v) => v !== '')
               .map(Number)
         : [];
-    // console.log(activeIds);
 
     const handleFilter = (id: number | null) => {
         let newIds: number[] = [];
@@ -54,21 +46,19 @@ export default function ReusableFilter({
         );
     };
 
-    const activeClass = 'bg-primary text-primary-foreground';
-    const inactiveClass =
-        'bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground';
-
     return (
         <div className="mb-6">
-            <ul className="flex flex-wrap justify-center gap-2 font-medium text-sm">
+            <ul className="flex flex-wrap justify-center gap-2 text-sm font-medium">
                 <li>
                     <Button
-                        variant="default"
+                        variant={
+                            (activeIds.length === 0
+                                ? 'default'
+                                : 'secondary') as any
+                        }
                         size="sm"
                         onClick={() => handleFilter(null)}
-                        className={`transition-colors ${
-                            activeIds.length === 0 ? activeClass : inactiveClass
-                        }`}
+                        className="cursor-pointer"
                     >
                         {allLabel}
                     </Button>
@@ -76,14 +66,14 @@ export default function ReusableFilter({
                 {items.map((item) => (
                     <li key={item.id}>
                         <Button
-                            variant="default"
+                            variant={
+                                (activeIds.includes(item.id)
+                                    ? 'default'
+                                    : 'secondary') as any
+                            }
                             size="sm"
                             onClick={() => handleFilter(item.id)}
-                            className={`transition-colors ${
-                                activeIds.includes(item.id)
-                                    ? activeClass
-                                    : inactiveClass
-                            }`}
+                            className="cursor-pointer"
                         >
                             {item.name}
                         </Button>

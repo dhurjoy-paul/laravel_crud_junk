@@ -42,29 +42,6 @@ interface Post {
     published_at: string;
 }
 
-interface PaginationLink {
-    url: string | null;
-    page: string | null;
-    label: string;
-    active: boolean;
-}
-
-interface PaginatedData<T> {
-    current_page: number;
-    last_page: number;
-    from: number;
-    to: number;
-    total: number;
-    per_page: number;
-    path: string;
-    links: PaginationLink[];
-    first_page_url: string | null;
-    last_page_url: string | null;
-    prev_page_url: string | null;
-    next_page_url: string | null;
-    data: T[];
-}
-
 export interface Auth {
     user: User;
 }

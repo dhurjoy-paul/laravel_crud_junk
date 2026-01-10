@@ -32,3 +32,48 @@ export interface FilterItem {
     id: number;
     name: string;
 }
+
+export interface PaginationLink {
+    url: string | null;
+    page: string | null;
+    label: string;
+    active: boolean;
+}
+
+// coming from BaseResourceController's index()
+export interface PaginatedData<T> {
+    current_page: number;
+    last_page: number;
+    from: number;
+    to: number;
+    total: number;
+    per_page: number;
+    path: string;
+    links: PaginationLink[];
+    first_page_url: string | null;
+    last_page_url: string | null;
+    prev_page_url: string | null;
+    next_page_url: string | null;
+    data: T[];
+}
+
+export interface PaginationProps {
+    meta: {
+        current_page: number;
+        last_page: number;
+        first_page_url: string | null;
+        last_page_url: string | null;
+        prev_page_url: string | null;
+        next_page_url: string | null;
+        from: number;
+        to: number;
+        total: number;
+        per_page: number;
+        path: string;
+        links: {
+            url: string | null;
+            label: string;
+            active: boolean;
+        }[];
+    };
+}

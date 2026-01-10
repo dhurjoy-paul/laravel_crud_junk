@@ -45,8 +45,13 @@ abstract class BaseResourceController extends Controller
           }
         });
       })
-      ->when(($this->filterName && $filterValue), function ($query) use ($filterValue) {
-        $query->where($this->filterKey, $filterValue);
+      ->when(($this->filterKey && $filterValue), function ($query) use ($filterValue) {
+        if (str_contains($filterValue, ',')) {
+          $ids = explode(',', $filterValue);
+          $query->whereIn($this->filterKey, $ids);
+        } else {
+          $query->where($this->filterKey, $filterValue);
+        }
       });
 
     if ($sortColumn) {

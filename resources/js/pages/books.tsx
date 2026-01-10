@@ -84,9 +84,9 @@ export default function Books({
                 name: 'Genre',
                 key: 'genre_name',
                 input_type: 'select',
-                form_sn: 9,
-                options: genres, // this is actual data
                 custom_style: 'badge',
+                options: genres,
+                form_sn: 9,
             },
         ],
     };

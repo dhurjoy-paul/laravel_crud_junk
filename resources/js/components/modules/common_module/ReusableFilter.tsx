@@ -1,13 +1,15 @@
+import { Button } from '@/components/ui/button';
 import { router } from '@inertiajs/react';
+// import { FilterItem } from './types';
 
-interface FilterItem {
+export interface FilterItem {
     id: number;
     name: string;
 }
 
 interface ReusableFilterProps {
     items: FilterItem[];
-    activeValue?: string | number | null;
+    activeValue?: string[] | number[] | null;
     filters: any;
     filterKey?: string | any; // 'category', 'genre', 'status'
     allLabel?: string;
@@ -20,12 +22,32 @@ export default function ReusableFilter({
     filterKey,
     allLabel = 'All',
 }: ReusableFilterProps) {
+    // console.log(activeValue);
+
+    const activeIds = activeValue
+        ? String(activeValue)
+              .split(',')
+              .filter((v) => v !== '')
+              .map(Number)
+        : [];
+    // console.log(activeIds);
+
     const handleFilter = (id: number | null) => {
+        let newIds: number[] = [];
+
+        if (id !== null) {
+            if (activeIds.includes(id)) {
+                newIds = activeIds.filter((item) => item !== id);
+            } else {
+                newIds = [...activeIds, id];
+            }
+        }
+
         router.get(
             window.location.pathname,
             {
                 ...filters,
-                [filterKey]: id,
+                [filterKey]: newIds.length > 0 ? newIds.join(',') : null,
                 page: 1,
             },
             { preserveState: true, replace: true },
@@ -34,33 +56,37 @@ export default function ReusableFilter({
 
     const activeClass = 'bg-primary text-primary-foreground';
     const inactiveClass =
-        'bg-secondary hover:bg-primary hover:text-primary-foreground';
+        'bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground';
 
     return (
         <div className="mb-6">
             <ul className="flex flex-wrap justify-center gap-2 font-medium text-sm">
                 <li>
-                    <button
+                    <Button
+                        variant="default"
+                        size="sm"
                         onClick={() => handleFilter(null)}
-                        className={`inline-block rounded-md px-4 py-2.5 transition-colors ${
-                            !activeValue ? activeClass : inactiveClass
+                        className={`transition-colors ${
+                            activeIds.length === 0 ? activeClass : inactiveClass
                         }`}
                     >
                         {allLabel}
-                    </button>
+                    </Button>
                 </li>
                 {items.map((item) => (
                     <li key={item.id}>
-                        <button
+                        <Button
+                            variant="default"
+                            size="sm"
                             onClick={() => handleFilter(item.id)}
-                            className={`inline-block rounded-md px-4 py-2.5 transition-colors ${
-                                Number(activeValue) === item.id
+                            className={`transition-colors ${
+                                activeIds.includes(item.id)
                                     ? activeClass
                                     : inactiveClass
                             }`}
                         >
                             {item.name}
-                        </button>
+                        </Button>
                     </li>
                 ))}
             </ul>

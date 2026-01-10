@@ -36,19 +36,23 @@ export default function CommonModule({
         setIsDrawerOpen(true);
     };
 
+    const filter = `${module.filter_name}`;
+
     return (
         <>
             <Head title={module.module_name} />
             <div className="flex flex-col flex-1 gap-4 p-4 rounded-xl h-full overflow-x-auto">
-                {/* tabs */}
-                <div className="mx-auto mb-2 w-full max-w-fit">
-                    <ReusableFilter
-                        items={categories}
-                        activeValue={filters.genre}
-                        filters={filters}
-                        filterKey={module.filter_name}
-                    />
-                </div>
+                {/* filter tabs */}
+                {filter && (
+                    <div className="mx-auto mb-2 w-full max-w-fit">
+                        <ReusableFilter
+                            items={categories}
+                            activeValue={filters[filter]}
+                            filters={filters}
+                            filterKey={module.filter_name}
+                        />
+                    </div>
+                )}
 
                 <div className="flex justify-between items-center mx-auto mb-4 w-full">
                     {/* reusable search component */}

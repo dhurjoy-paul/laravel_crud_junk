@@ -26,3 +26,9 @@ export interface ModuleConfig {
     filter_name?: string;
     fields: ModuleField[];
 }
+
+// each category, each genre
+export interface FilterItem {
+    id: number;
+    name: string;
+}

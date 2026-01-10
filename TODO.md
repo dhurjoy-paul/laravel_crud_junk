@@ -6,8 +6,9 @@
 - [x] **Configurable Sorting:** Implemented custom column-wise sorting, controlled by `ModuleConfig`
 - [x] **Custom Multi Search** Implemented custom multi search by base controller
 - [ ] **Generic Multi-Filter System:** _Example Case:_ Filter by Author Name + Genres.
+    - [x] Make filter optional
     - [x] Implement single generic filtering.
-    - [ ] For single filter multiple selection have to implement.
+    - [x] For each filter, multiple selection have to implement.
     - [ ] Implement multiple generic filtering.
     - [ ] Customize by `ModuleConfig`.
 - [ ] **Controller Customization:** Find a way to optionally override/customize controllers.

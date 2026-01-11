@@ -1,5 +1,6 @@
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -106,10 +107,10 @@ export default function FormDrawer({
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent
                 onOpenAutoFocus={(e) => e.preventDefault()}
-                className="flex flex-col gap-0 overflow-y-auto p-0 sm:max-w-md"
+                className="flex flex-col gap-0 p-0 sm:max-w-md overflow-y-auto"
             >
                 <SheetHeader className="p-6 text-left">
-                    <SheetTitle className="text-xl font-bold">
+                    <SheetTitle className="font-bold text-xl">
                         {item
                             ? `Edit ${module.model_name}`
                             : `New ${module.model_name}`}
@@ -128,8 +129,12 @@ export default function FormDrawer({
                         className="space-y-5 pb-24"
                     >
                         {formFields.map((field) => {
-                            const isSelectField = field.input_type === 'select';
-                            const currentKey = isSelectField
+                            const isDatabaseSelect =
+                                field.input_type === 'select';
+                            const isManualSelect =
+                                field.input_type === 'manualSelect';
+
+                            const currentKey = isDatabaseSelect
                                 ? foreignKey
                                 : field.key;
 
@@ -137,17 +142,17 @@ export default function FormDrawer({
                                 <div key={field.key} className="space-y-2">
                                     <Label
                                         htmlFor={field.key}
-                                        className="text-sm font-medium"
+                                        className="font-medium text-sm"
                                     >
                                         {field.name}
                                     </Label>
 
-                                    {field.input_type === 'select' ? (
+                                    {isDatabaseSelect || isManualSelect ? (
                                         <Select
-                                            value={data[foreignKey]}
+                                            value={data[currentKey]?.toString()}
                                             onValueChange={(val) =>
                                                 handleValueChange(
-                                                    foreignKey,
+                                                    currentKey,
                                                     val,
                                                 )
                                             }
@@ -174,7 +179,7 @@ export default function FormDrawer({
                                             </SelectContent>
                                         </Select>
                                     ) : field.input_type === 'tinymce' ? (
-                                        <div className="overflow-hidden rounded-md border bg-background">
+                                        <div className="bg-background border rounded-md overflow-hidden">
                                             <Editor
                                                 onFocusIn={(e) => {
                                                     e.stopImmediatePropagation();
@@ -217,6 +222,30 @@ export default function FormDrawer({
                                             }
                                             required={!item}
                                         />
+                                    ) : field.input_type === 'checkbox' ? (
+                                        <div className="flex flex-row items-center space-x-3 space-y-0 shadow-sm p-4 border rounded-md">
+                                            <Checkbox
+                                                id={field.key}
+                                                checked={
+                                                    data[field.key] === 1 ||
+                                                    data[field.key] === true
+                                                }
+                                                onCheckedChange={(checked) =>
+                                                    handleValueChange(
+                                                        field.key,
+                                                        checked ? 1 : 0,
+                                                    )
+                                                }
+                                            />
+                                            <div className="space-y-1 leading-none">
+                                                <Label
+                                                    htmlFor={field.key}
+                                                    className="font-medium text-sm cursor-pointer"
+                                                >
+                                                    {field.name}
+                                                </Label>
+                                            </div>
+                                        </div>
                                     ) : (
                                         <Input
                                             id={field.key}
@@ -238,8 +267,8 @@ export default function FormDrawer({
                     </form>
                 </div>
 
-                <div className="fixed bottom-0 z-10 w-full border-t bg-background p-6 sm:max-w-md">
-                    <div className="flex w-full items-center gap-3">
+                <div className="bottom-0 z-10 fixed bg-background p-6 border-t w-full sm:max-w-md">
+                    <div className="flex items-center gap-3 w-full">
                         <Button
                             variant="outline"
                             type="button"
@@ -255,7 +284,7 @@ export default function FormDrawer({
                             disabled={processing}
                         >
                             {processing ? (
-                                <Spinner className="h-4 w-4" />
+                                <Spinner className="w-4 h-4" />
                             ) : item ? (
                                 'Update'
                             ) : (

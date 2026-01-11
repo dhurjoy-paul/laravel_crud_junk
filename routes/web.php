@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\HeadphoneController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,6 +19,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::delete('/books/bulk', [BookController::class, 'bulkDestroy'])->name('books.bulk');
     Route::resource('books', BookController::class);
+
+    Route::delete('/headphones/bulk', [HeadphoneController::class, 'bulkDestroy'])->name('headphones.bulk');
+    Route::resource('headphones', HeadphoneController::class);
 
     Route::get('/dashboard', function () {
         return Inertia::render('dashboard');

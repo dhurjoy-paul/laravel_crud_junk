@@ -1,6 +1,25 @@
 import { InertiaLinkProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
 
+export interface Headphone {
+    id: number;
+    brand: string;
+    model_name: string;
+    slug: string; // For SEO-friendly URLs (e.g., /products/sony-wh-1000xm5)
+    type: 'Over-Ear' | 'On-Ear' | 'In-Ear';
+    connection_type: 'Wired' | 'Wireless' | 'Hybrid';
+    color: string;
+    has_microphone: boolean;
+    is_noise_cancelling: boolean;
+    price: number; // Selling price
+    discount_price?: number; // Sale price
+    stock_quantity: number; // How many are in the warehouse
+    status: 'In Stock' | 'Out of Stock' | 'Pre-order';
+    image_url: string;
+    description: string;
+    location_rack: string; // Which aisle/shelf in the shop
+}
+
 interface Category {
     id: number;
     name: string;

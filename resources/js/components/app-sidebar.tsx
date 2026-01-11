@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard, home } from '@/routes';
 import books from '@/routes/books';
+import headphones from '@/routes/headphones';
 import posts from '@/routes/posts';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
@@ -19,6 +20,7 @@ import {
     BookOpen,
     BookOpenText,
     Folder,
+    Headset,
     LayoutGrid,
     Notebook,
 } from 'lucide-react';
@@ -39,6 +41,11 @@ const mainNavItems: NavItem[] = [
         title: 'Books',
         href: books.index(),
         icon: Notebook,
+    },
+    {
+        title: 'Headphones',
+        href: headphones.index(),
+        icon: Headset,
     },
 ];
 

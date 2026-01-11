@@ -5,6 +5,8 @@ export interface ModuleField {
         | 'tinymce'
         | 'textarea'
         | 'select'
+        | 'manualSelect'
+        | 'checkbox'
         | 'file'
         | 'text'
         | 'email'

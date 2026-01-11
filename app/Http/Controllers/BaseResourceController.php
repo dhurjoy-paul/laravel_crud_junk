@@ -18,6 +18,7 @@ abstract class BaseResourceController extends Controller
 
   protected $isUserId = false;      // boolean, if database table need/has user_id column
   protected $slugColumn;            // which column will create the slug? 'title', 'name', 'product_name'
+  protected $fileColumn = 'image';  // image column name, default to image
 
   protected $filterKey = null;      // (optional) 'category_id', 'genre_id'
   protected $filterName = null;     // (optional) 'category', 'genre'
@@ -81,8 +82,8 @@ abstract class BaseResourceController extends Controller
   {
     $data = $request->validate($this->getValidationRules());
 
-    if ($request->hasFile('image')) {
-      $data['image'] = $request->file('image')->store($this->folderName, 'public');
+    if ($request->hasFile($this->fileColumn)) {
+      $data[$this->fileColumn] = $request->file($this->fileColumn)->store($this->folderName, 'public');
     }
 
     if ($this->filterKey && $this->relationModel) {
@@ -126,9 +127,11 @@ abstract class BaseResourceController extends Controller
 
     $data = $request->validate($this->getValidationRules($id));
 
-    if ($request->hasFile('image')) {
-      if ($item->image) Storage::disk('public')->delete($item->image);
-      $data['image'] = $request->file('image')->store($this->folderName, 'public');
+    if ($request->hasFile($this->fileColumn)) {
+      if ($item->{$this->fileColumn}) {
+        Storage::disk('public')->delete($item->{$this->fileColumn});
+      }
+      $data[$this->fileColumn] = $request->file($this->fileColumn)->store($this->folderName, 'public');
     }
 
     if ($this->filterKey && $this->relationModel) {

@@ -16,7 +16,7 @@ export default function CommonModule({
     filters,
 }: {
     module: ModuleConfig;
-    categories: any[];
+    categories?: any[];
     items: PaginatedData<any>;
     filters?: any;
 }) {
@@ -41,9 +41,9 @@ export default function CommonModule({
     return (
         <>
             <Head title={module.module_name} />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <div className="flex flex-col flex-1 gap-4 p-4 rounded-xl h-full overflow-x-auto">
                 {/* filter tabs */}
-                {filter && (
+                {filter && categories && (
                     <div className="mx-auto mb-2 w-full max-w-fit">
                         <ReusableFilter
                             items={categories}
@@ -54,7 +54,7 @@ export default function CommonModule({
                     </div>
                 )}
 
-                <div className="mx-auto mb-4 flex w-full items-center justify-between">
+                <div className="flex justify-between items-center mx-auto mb-4 w-full">
                     {/* reusable search component */}
                     <Search
                         filters={filters}

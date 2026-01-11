@@ -2,6 +2,7 @@ export interface ModuleField {
     name: string; // table header & form labels
     key: string; // this is DB column name ('published_at', 'title')
     input_type:
+        | 'tinymce'
         | 'textarea'
         | 'select'
         | 'file'
@@ -12,7 +13,7 @@ export interface ModuleField {
         | 'tel';
     options?: any[]; // this is for category / genre
     css_style?: string; // custom CSS classes
-    custom_style?: string | 'badge'; // custom name style
+    custom_style?: 'badge' | 'truncate'; // custom name style
     form_sn?: number; // form input serial no
     table_hide?: boolean; // hide from table
     form_hide?: boolean; // hide from form
@@ -24,6 +25,7 @@ export interface ModuleConfig {
     route_name: string; // '/posts'  // also have to make a method like /posts/bulk
     model_name: string; // Post
     filter_name?: string;
+    actions?: boolean;
     fields: ModuleField[];
 }
 

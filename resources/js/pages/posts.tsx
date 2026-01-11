@@ -1,8 +1,11 @@
 import CommonModule from '@/components/modules/common_module/CommonModule';
-import { ModuleConfig } from '@/components/modules/common_module/types';
+import {
+    ModuleConfig,
+    PaginatedData,
+} from '@/components/modules/common_module/types';
 import AppLayout from '@/layouts/app-layout';
 import posts from '@/routes/posts';
-import { BreadcrumbItem, Category, PaginatedData, Post } from '@/types';
+import { BreadcrumbItem, Category, Post } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -42,11 +45,13 @@ export default function Posts({
                 custom_style: 'badge',
                 options: categories,
                 form_sn: 2,
+                sort: true,
             },
             {
                 name: 'Content',
                 key: 'content',
-                input_type: 'textarea',
+                input_type: 'tinymce',
+                custom_style: 'truncate',
                 form_sn: 3,
             },
             {

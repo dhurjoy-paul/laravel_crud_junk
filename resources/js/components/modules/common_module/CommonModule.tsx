@@ -74,7 +74,7 @@ export default function CommonModule({
 
                 {/* reusable table component */}
                 <DataTable
-                    config={module}
+                    module={module}
                     allData={allItems}
                     onEdit={handleEditClick}
                     filters={filters}

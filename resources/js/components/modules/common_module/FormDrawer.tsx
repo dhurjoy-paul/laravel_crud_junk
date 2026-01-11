@@ -20,8 +20,11 @@ import {
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { useForm } from '@inertiajs/react';
+import { Editor } from '@tinymce/tinymce-react';
 import React, { useEffect } from 'react';
 import { ModuleConfig } from './types';
+
+const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
 export default function FormDrawer({
     module,
@@ -101,7 +104,10 @@ export default function FormDrawer({
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="flex flex-col gap-0 overflow-y-auto p-0 sm:max-w-md">
+            <SheetContent
+                onOpenAutoFocus={(e) => e.preventDefault()}
+                className="flex flex-col gap-0 overflow-y-auto p-0 sm:max-w-md"
+            >
                 <SheetHeader className="p-6 text-left">
                     <SheetTitle className="text-xl font-bold">
                         {item
@@ -167,6 +173,25 @@ export default function FormDrawer({
                                                 )}
                                             </SelectContent>
                                         </Select>
+                                    ) : field.input_type === 'tinymce' ? (
+                                        <div className="overflow-hidden rounded-md border bg-background">
+                                            <Editor
+                                                onFocusIn={(e) => {
+                                                    e.stopImmediatePropagation();
+                                                }}
+                                                onEditorChange={(
+                                                    newValue: string,
+                                                ) =>
+                                                    handleValueChange(
+                                                        field.key,
+                                                        newValue,
+                                                    )
+                                                }
+                                                value={data[field.key] || ''}
+                                                licenseKey="gpl"
+                                                init={EditorInitOptions}
+                                            />
+                                        </div>
                                     ) : field.input_type === 'textarea' ? (
                                         <Textarea
                                             id={field.key}
@@ -243,3 +268,36 @@ export default function FormDrawer({
         </Sheet>
     );
 }
+
+const EditorInitOptions = {
+    height: 400,
+    menubar: true,
+    base_url: '/tinymce',
+    suffix: '.min',
+    skin: isDarkMode ? 'oxide-dark' : 'oxide',
+    content_css: isDarkMode ? 'dark' : 'default',
+    branding: false,
+    promotion: false,
+    sticky_toolbar: true,
+    toolbar:
+        'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+    plugins: [
+        'advlist',
+        'autolink',
+        'lists',
+        'link',
+        'image',
+        'charmap',
+        'anchor',
+        'searchreplace',
+        'visualblocks',
+        'code',
+        'fullscreen',
+        'insertdatetime',
+        'media',
+        'table',
+        'preview',
+        'help',
+        'wordcount',
+    ],
+};

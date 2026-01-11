@@ -1,8 +1,11 @@
 import CommonModule from '@/components/modules/common_module/CommonModule';
-import { ModuleConfig } from '@/components/modules/common_module/types';
+import {
+    ModuleConfig,
+    PaginatedData,
+} from '@/components/modules/common_module/types';
 import AppLayout from '@/layouts/app-layout';
 import books from '@/routes/books';
-import { Book, BreadcrumbItem, Genre, PaginatedData } from '@/types';
+import { Book, BreadcrumbItem, Genre } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

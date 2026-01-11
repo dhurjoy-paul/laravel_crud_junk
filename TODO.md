@@ -15,14 +15,15 @@
     - [x] For each filter, multiple selection have to implement.
     - [ ] Implement multiple generic filtering.
     - [ ] Customize by `ModuleConfig`.
-- [ ] **Controller Customization:** Find a way to optionally override/customize controllers.
+- [x] **Controller Customization:** Find a way to optionally override/customize controllers.
 
 ---
 
 ## 🔧 Bug Fixes & Stability
 
+- [ ] **TinyMCE Options Fix:** Resolve the issue of TinyMCE's "tool options not working".
 - [ ] **Fake Filler Fix:** Resolve the glitch upon filling data with Fake Filler.
-- [ ] **Open Glitch:** Fix the bug occurring during the "Open" edit/add form.
+- [x] **Open Glitch:** Fix the bug occurring during the "Open" edit/add form.
 - [x] **Latest Fixes:** Fix data organization with latest.
 - [x] **Pagination Eclipse:** Have to add pagination eclipse. Only 3 pages will show.
 - [ ] **Redirect:** When there is no data, after deletion should go back to ?page=1

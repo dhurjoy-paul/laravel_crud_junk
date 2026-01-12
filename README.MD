@@ -126,7 +126,7 @@ export interface ModuleField {
         | 'manualSelect' // This select's options can be made on frontend
         | 'checkbox' // For boolean values
         | 'file' // now supports single 'image'
-        //  | 'files' // coming soon
+    //  | 'files' // coming soon
         | 'text'
         | 'email'
         | 'number'
@@ -345,12 +345,3 @@ php artisan migrate
 
 The Common Module is **powerful but tightly coupled** between frontend and backend.
 Any change on one side **must be reflected on the other**.
-
----
-
-Perfect — below is a **clean, professional “Steps” section** you can **insert into your existing README**.
-Nothing else is changed; this is **add-only** and senior–junior friendly.
-
-You can place this section **after “Using the Common Module”** or **before “Recommended Learning Path”**.
-
----

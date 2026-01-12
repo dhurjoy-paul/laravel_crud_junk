@@ -113,8 +113,8 @@ export default function DataTable({
         <div className="space-y-4">
             {/* bulk delete toolbar */}
             {showActions === true && selectedIds.length > 0 && (
-                <div className="flex justify-between items-center bg-muted/50 slide-in-from-top-1 p-2 px-4 border rounded-lg animate-in fade-in">
-                    <span className="font-medium text-sm">
+                <div className="flex animate-in items-center justify-between rounded-lg border bg-muted/50 p-2 px-4 fade-in slide-in-from-top-1">
+                    <span className="text-sm font-medium">
                         {selectedIds.length} {module.module_name} selected
                     </span>
                     <div className="flex gap-2">
@@ -137,7 +137,7 @@ export default function DataTable({
             )}
 
             {/* main table */}
-            <div className="border rounded-md w-full overflow-hidden">
+            <div className="w-full overflow-hidden rounded-md border">
                 <Table>
                     <TableHeader className="bg-muted/50">
                         <TableRow>
@@ -151,7 +151,7 @@ export default function DataTable({
                                             )
                                         }
                                         onCheckedChange={toggleSelectAll}
-                                        className="border-2 border-foreground cursor-pointer"
+                                        className="cursor-pointer border-2 border-foreground"
                                     />
                                 </TableHead>
                             )}
@@ -167,7 +167,7 @@ export default function DataTable({
                                                 handleSort(field.key)
                                             }
                                             variant="ghost"
-                                            className="flex justify-center items-center gap-2 mx-auto w-fit cursor-pointer"
+                                            className="mx-auto flex w-fit cursor-pointer items-center justify-center gap-2"
                                         >
                                             <span>{field.name}</span>
                                             <ArrowUpDown
@@ -182,7 +182,7 @@ export default function DataTable({
                             ))}
 
                             {showActions === true && (
-                                <TableHead className="font-semibold text-center">
+                                <TableHead className="text-center font-semibold">
                                     Actions
                                 </TableHead>
                             )}
@@ -199,7 +199,7 @@ export default function DataTable({
                                     {showActions === true && (
                                         <TableCell className="text-center">
                                             <Checkbox
-                                                className="border-[1.5px] border-foreground cursor-pointer"
+                                                className="cursor-pointer border-[1.5px] border-foreground"
                                                 checked={selectedIds.includes(
                                                     row.id,
                                                 )}
@@ -239,12 +239,12 @@ export default function DataTable({
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    className="hover:bg-destructive/50 text-destructive-foreground hover:text-destructive-foreground"
+                                                    className="text-destructive-foreground hover:bg-destructive/50 hover:text-destructive-foreground"
                                                     onClick={() =>
                                                         handleDelete(row.id)
                                                     }
                                                 >
-                                                    <Trash2 className="w-4 h-4" />
+                                                    <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
                                         </TableCell>
@@ -255,7 +255,7 @@ export default function DataTable({
                             <TableRow>
                                 <TableCell
                                     colSpan={formFields.length + 2}
-                                    className="h-24 text-muted-foreground text-center"
+                                    className="h-24 text-center text-muted-foreground"
                                 >
                                     No {module.module_name.toLowerCase()} found.
                                 </TableCell>
@@ -275,13 +275,13 @@ function renderCell(field: ModuleField, row: any) {
         return (
             <div className="flex justify-center">
                 {Number(value) === 1 ? (
-                    <Badge className="gap-1 bg-green-50 dark:bg-green-700 border-green-400 rounded-full text-green-900 dark:text-green-50">
+                    <Badge className="gap-1 rounded-full border-green-400 bg-green-50 text-green-900 dark:bg-green-700 dark:text-green-50">
                         <Check size={12} strokeWidth={5} />
                     </Badge>
                 ) : (
                     <Badge
                         variant="outline"
-                        className="gap-1 bg-red-50 dark:bg-red-700 border-red-400 rounded-full text-red-900 dark:text-red-50"
+                        className="gap-1 rounded-full border-red-400 bg-red-50 text-red-900 dark:bg-red-700 dark:text-red-50"
                     >
                         <X size={12} strokeWidth={5} />
                     </Badge>
@@ -294,11 +294,11 @@ function renderCell(field: ModuleField, row: any) {
         return value ? (
             <img
                 src={`/storage/${value}`}
-                className="mx-auto rounded size-10 object-cover"
+                className="mx-auto size-10 rounded object-cover"
                 alt="thumbnail"
             />
         ) : (
-            <span className="text-muted-foreground text-xs">No Image</span>
+            <span className="text-xs text-muted-foreground">No Image</span>
         );
     }
 

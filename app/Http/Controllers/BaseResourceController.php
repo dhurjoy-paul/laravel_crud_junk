@@ -80,10 +80,11 @@ abstract class BaseResourceController extends Controller
    */
   public function store(Request $request)
   {
+    $fileColumn = $this->fileColumn;
     $data = $request->validate($this->getValidationRules());
 
-    if ($request->hasFile($this->fileColumn)) {
-      $data[$this->fileColumn] = $request->file($this->fileColumn)->store($this->folderName, 'public');
+    if ($request->hasFile($fileColumn)) {
+      $data[$fileColumn] = $request->file($fileColumn)->store($this->folderName, 'public');
     }
 
     if ($this->filterKey && $this->relationModel) {
@@ -119,6 +120,7 @@ abstract class BaseResourceController extends Controller
    */
   public function update(Request $request, $id)
   {
+    $fileColumn = $this->fileColumn;
     $item = $this->model::findOrFail($id);
 
     if ($this->isUserId) {
@@ -127,11 +129,13 @@ abstract class BaseResourceController extends Controller
 
     $data = $request->validate($this->getValidationRules($id));
 
-    if ($request->hasFile($this->fileColumn)) {
-      if ($item->{$this->fileColumn}) {
-        Storage::disk('public')->delete($item->{$this->fileColumn});
+    if ($request->hasFile($fileColumn)) {
+      if ($item->{$fileColumn}) {
+        Storage::disk('public')->delete($item->{$fileColumn});
       }
-      $data[$this->fileColumn] = $request->file($this->fileColumn)->store($this->folderName, 'public');
+      $data[$fileColumn] = $request->file($fileColumn)->store($this->folderName, 'public');
+    } else {
+      unset($data[$fileColumn]);
     }
 
     if ($this->filterKey && $this->relationModel) {

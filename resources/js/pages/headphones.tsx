@@ -31,18 +31,17 @@ export default function Headphones({
         model_name: 'Headphone',
         fields: [
             {
-                name: 'Brand',
-                key: 'brand',
-                input_type: 'text',
-                form_sn: 1,
-                sort: true,
-            },
-            {
                 name: 'Model Name',
                 key: 'model_name',
                 input_type: 'text',
                 form_sn: 2,
-                sort: true,
+            },
+            {
+                name: 'Brand',
+                key: 'brand',
+                input_type: 'text',
+                custom_style: 'badge',
+                form_sn: 1,
             },
             {
                 name: 'Type',
@@ -109,13 +108,14 @@ export default function Headphones({
                 key: 'image_url',
                 input_type: 'file',
                 form_sn: 10,
-                // table_hide: true,
+                table_hide: true,
             },
             {
                 name: 'Rack Location',
                 key: 'location_rack',
                 input_type: 'text',
                 form_sn: 11,
+                sort: true,
             },
             {
                 name: 'Color',

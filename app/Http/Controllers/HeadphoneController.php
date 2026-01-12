@@ -31,8 +31,8 @@ class HeadphoneController extends BaseResourceController
 
             'color'               => ['required', 'string', 'max:50'],
 
-            'has_microphone'      => ['required', 'boolean'],
-            'is_noise_cancelling' => ['required', 'boolean'],
+            'has_microphone'      => ['boolean'],
+            'is_noise_cancelling' => ['boolean'],
 
             'price'               => ['required', 'numeric', 'min:0'],
             'discount_price'      => ['nullable', 'numeric', 'min:0', 'lt:price'],

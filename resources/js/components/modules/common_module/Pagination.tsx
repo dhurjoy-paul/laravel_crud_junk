@@ -16,15 +16,19 @@ import { Link, router } from '@inertiajs/react';
 import { ArrowLeft, ArrowRight, BadgeInfo, MoreHorizontal } from 'lucide-react';
 import { PaginationProps } from './types';
 
-export default function Pagination({ meta }: PaginationProps) {
+export default function Pagination({ filters, meta }: PaginationProps) {
     const { from, to, total, per_page, links, prev_page_url, next_page_url } =
         meta;
 
     const handlePerPageChange = (value: string) => {
         router.get(
             meta.path,
-            { per_page: value, page: 1 },
-            { preserveState: true, preserveScroll: true },
+            { ...filters, per_page: value, page: 1 },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            },
         );
     };
 
@@ -44,9 +48,9 @@ export default function Pagination({ meta }: PaginationProps) {
 
     return (
         <TooltipProvider delayDuration={200}>
-            <div className="flex flex-col items-center justify-between gap-4 border-t px-2 py-4 sm:flex-row">
+            <div className="flex sm:flex-row flex-col justify-between items-center gap-4 px-2 py-4 border-t">
                 {/* results info */}
-                <div className="text-sm text-muted-foreground">
+                <div className="text-muted-foreground text-sm">
                     {total > 0 ? (
                         <>
                             Showing &nbsp;
@@ -77,17 +81,17 @@ export default function Pagination({ meta }: PaginationProps) {
                     )}
                 </div>
 
-                <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
+                <div className="flex sm:flex-row flex-col items-center gap-4 sm:gap-6">
                     {/* rows per page dropdown */}
                     <div className="flex items-center gap-2">
-                        <p className="text-sm font-medium whitespace-nowrap">
+                        <p className="font-medium text-sm whitespace-nowrap">
                             Rows per page
                         </p>
                         <Select
                             value={per_page.toString()}
                             onValueChange={handlePerPageChange}
                         >
-                            <SelectTrigger className="h-8 w-[70px] border-2">
+                            <SelectTrigger className="border-2 w-[70px] h-8">
                                 <SelectValue placeholder={per_page} />
                             </SelectTrigger>
                             <SelectContent className="min-w-[70px]">
@@ -105,7 +109,7 @@ export default function Pagination({ meta }: PaginationProps) {
 
                     {/* custom vertical line separator */}
                     <div
-                        className="hidden h-6 w-px shrink-0 bg-muted-foreground sm:block"
+                        className="hidden sm:block bg-muted-foreground w-px h-6 shrink-0"
                         aria-hidden="true"
                     />
 

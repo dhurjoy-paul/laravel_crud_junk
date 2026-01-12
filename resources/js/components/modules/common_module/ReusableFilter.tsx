@@ -42,13 +42,17 @@ export default function ReusableFilter({
                 [filterKey]: newIds.length > 0 ? newIds.join(',') : null,
                 page: 1,
             },
-            { preserveState: true, replace: true },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            },
         );
     };
 
     return (
         <div className="mb-6">
-            <ul className="flex flex-wrap justify-center gap-2 text-sm font-medium">
+            <ul className="flex flex-wrap justify-center gap-2 font-medium text-sm">
                 <li>
                     <Button
                         variant={

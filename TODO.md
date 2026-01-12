@@ -7,6 +7,7 @@
 ## 🚀 Core Features
 
 - [ ] **Slug-based RUD:** Enable Single Item Read, Update, and Delete using `slug`.
+- [x] **Columns Visibility** Implemented column visibility with sorting.
 - [x] **Configurable Sorting:** Implemented custom column-wise sorting, controlled by `ModuleConfig`
 - [x] **Custom Multi Search** Implemented custom multi search by base controller
 - [ ] **Generic Multi-Filter System:** _Example Case:_ Filter by Author Name + Genres.

@@ -81,7 +81,7 @@ export default function CommonModule({
                 />
 
                 {/* reusable pagination component */}
-                <Pagination meta={meta} />
+                <Pagination filters={filters} meta={meta} />
             </div>
 
             {/* reusable from drawer for both edit and create */}

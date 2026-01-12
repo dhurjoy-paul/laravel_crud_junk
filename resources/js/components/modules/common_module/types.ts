@@ -62,6 +62,7 @@ export interface PaginatedData<T> {
 }
 
 export interface PaginationProps {
+    filters: any;
     meta: {
         current_page: number;
         last_page: number;

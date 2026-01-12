@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -9,16 +8,13 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { router } from '@inertiajs/react';
-import { ArrowUpDown, Check, PencilLine, Trash2, X } from 'lucide-react';
+import { ArrowUpDown, PencilLine, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { ModuleConfig, ModuleField } from './types';
+import { ColumnSettingsDropdown } from './columnSettingsDropdown';
+import { DataTableCell } from './DataTableCell';
+import { useTableSettings } from './hooks/useColumnSettings';
+import { ModuleConfig } from './types';
 
 export default function DataTable({
     module,
@@ -31,6 +27,8 @@ export default function DataTable({
     onEdit: any;
     filters: any;
 }) {
+    const { columnSettings, visibleFields, toggleColumn, moveColumn } =
+        useTableSettings(module);
     const showActions = module.actions ?? true;
     const [selectedIds, setSelectedIds] = useState<(string | number)[]>([]);
     const rows = allData?.data || [];
@@ -107,14 +105,12 @@ export default function DataTable({
         );
     };
 
-    const formFields = module.fields.filter((f) => !f.table_hide);
-
     return (
         <div className="space-y-4">
             {/* bulk delete toolbar */}
             {showActions === true && selectedIds.length > 0 && (
-                <div className="flex animate-in items-center justify-between rounded-lg border bg-muted/50 p-2 px-4 fade-in slide-in-from-top-1">
-                    <span className="text-sm font-medium">
+                <div className="flex justify-between items-center bg-muted/50 slide-in-from-top-1 p-2 px-4 border rounded-lg animate-in fade-in">
+                    <span className="font-medium text-sm">
                         {selectedIds.length} {module.module_name} selected
                     </span>
                     <div className="flex gap-2">
@@ -136,8 +132,18 @@ export default function DataTable({
                 </div>
             )}
 
+            {/* customize columns */}
+            <div className="flex justify-end items-center gap-2">
+                <ColumnSettingsDropdown
+                    columnSettings={columnSettings}
+                    module={module}
+                    onToggle={toggleColumn}
+                    onMove={moveColumn}
+                />
+            </div>
+
             {/* main table */}
-            <div className="w-full overflow-hidden rounded-md border">
+            <div className="border rounded-md w-full overflow-hidden">
                 <Table>
                     <TableHeader className="bg-muted/50">
                         <TableRow>
@@ -151,12 +157,12 @@ export default function DataTable({
                                             )
                                         }
                                         onCheckedChange={toggleSelectAll}
-                                        className="cursor-pointer border-2 border-foreground"
+                                        className="border-2 border-foreground cursor-pointer"
                                     />
                                 </TableHead>
                             )}
 
-                            {formFields.map((field, index) => (
+                            {visibleFields.map((field, index) => (
                                 <TableHead
                                     key={field.key}
                                     className={`font-semibold ${index === 0 ? 'text-left' : 'text-center'}`}
@@ -167,7 +173,7 @@ export default function DataTable({
                                                 handleSort(field.key)
                                             }
                                             variant="ghost"
-                                            className="mx-auto flex w-fit cursor-pointer items-center justify-center gap-2"
+                                            className="flex justify-center items-center gap-2 mx-auto w-fit cursor-pointer"
                                         >
                                             <span>{field.name}</span>
                                             <ArrowUpDown
@@ -182,7 +188,7 @@ export default function DataTable({
                             ))}
 
                             {showActions === true && (
-                                <TableHead className="text-center font-semibold">
+                                <TableHead className="font-semibold text-center">
                                     Actions
                                 </TableHead>
                             )}
@@ -199,7 +205,7 @@ export default function DataTable({
                                     {showActions === true && (
                                         <TableCell className="text-center">
                                             <Checkbox
-                                                className="cursor-pointer border-[1.5px] border-foreground"
+                                                className="border-[1.5px] border-foreground cursor-pointer"
                                                 checked={selectedIds.includes(
                                                     row.id,
                                                 )}
@@ -210,7 +216,7 @@ export default function DataTable({
                                         </TableCell>
                                     )}
 
-                                    {formFields.map((field, index) => (
+                                    {visibleFields.map((field, index) => (
                                         <TableCell
                                             key={field.key}
                                             className={
@@ -219,7 +225,10 @@ export default function DataTable({
                                                     : 'text-center'
                                             }
                                         >
-                                            {renderCell(field, row)}
+                                            <DataTableCell
+                                                field={field}
+                                                row={row}
+                                            />
                                         </TableCell>
                                     ))}
 
@@ -239,12 +248,12 @@ export default function DataTable({
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    className="text-destructive-foreground hover:bg-destructive/50 hover:text-destructive-foreground"
+                                                    className="hover:bg-destructive/50 text-destructive-foreground hover:text-destructive-foreground"
                                                     onClick={() =>
                                                         handleDelete(row.id)
                                                     }
                                                 >
-                                                    <Trash2 className="h-4 w-4" />
+                                                    <Trash2 className="w-4 h-4" />
                                                 </Button>
                                             </div>
                                         </TableCell>
@@ -254,8 +263,8 @@ export default function DataTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={formFields.length + 2}
-                                    className="h-24 text-center text-muted-foreground"
+                                    colSpan={visibleFields.length + 2}
+                                    className="h-24 text-muted-foreground text-center"
                                 >
                                     No {module.module_name.toLowerCase()} found.
                                 </TableCell>
@@ -266,68 +275,4 @@ export default function DataTable({
             </div>
         </div>
     );
-}
-
-function renderCell(field: ModuleField, row: any) {
-    const value = row[field.key];
-
-    if (field.input_type === 'checkbox' || typeof value === 'boolean') {
-        return (
-            <div className="flex justify-center">
-                {Number(value) === 1 ? (
-                    <Badge className="gap-1 rounded-full border-green-400 bg-green-50 text-green-900 dark:bg-green-700 dark:text-green-50">
-                        <Check size={12} strokeWidth={5} />
-                    </Badge>
-                ) : (
-                    <Badge
-                        variant="outline"
-                        className="gap-1 rounded-full border-red-400 bg-red-50 text-red-900 dark:bg-red-700 dark:text-red-50"
-                    >
-                        <X size={12} strokeWidth={5} />
-                    </Badge>
-                )}
-            </div>
-        );
-    }
-
-    if (field.key === 'image_url' || field.key === 'image') {
-        return value ? (
-            <img
-                src={`/storage/${value}`}
-                className="mx-auto size-10 rounded object-cover"
-                alt="thumbnail"
-            />
-        ) : (
-            <span className="text-xs text-muted-foreground">No Image</span>
-        );
-    }
-
-    if (field.custom_style === 'truncate') {
-        return (
-            <TooltipProvider>
-                <Tooltip delayDuration={150}>
-                    <TooltipTrigger asChild>
-                        <span
-                            className={`mx-auto block max-w-[250px] cursor-help truncate ${field.css_style}`}
-                        >
-                            {value}
-                        </span>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" className="max-w-xs break-words">
-                        <p>{value}</p>
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
-        );
-    }
-
-    if (field.custom_style === 'badge') {
-        return (
-            <Badge variant="outline" className={field.css_style}>
-                {value}
-            </Badge>
-        );
-    }
-
-    return <span className={field.css_style}>{value ?? '-'}</span>;
 }

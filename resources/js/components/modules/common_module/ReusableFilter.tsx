@@ -1,89 +1,110 @@
 import { Button } from '@/components/ui/button';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover';
 import { router } from '@inertiajs/react';
-import { FilterItem } from './types';
+import { Filter } from 'lucide-react';
 
-interface ReusableFilterProps {
-    items: FilterItem[];
-    activeValue?: string[] | number[] | null;
-    filters: any;
-    filterKey?: string | any; // 'category', 'genre', 'status'
-    allLabel?: string;
-}
-
-export default function ReusableFilter({
-    items,
-    activeValue,
-    filters,
-    filterKey,
-    allLabel = 'All',
-}: ReusableFilterProps) {
-    const activeIds = activeValue
-        ? String(activeValue)
-              .split(',')
-              .filter((v) => v !== '')
-              .map(Number)
+export function ReusableFilter({
+    field,
+    currentFilters,
+}: {
+    field: any;
+    currentFilters: any;
+}) {
+    const activeValues = currentFilters[field.key]
+        ? String(currentFilters[field.key]).split(',')
         : [];
 
-    const handleFilter = (id: number | null) => {
-        let newIds: number[] = [];
-
-        if (id !== null) {
-            if (activeIds.includes(id)) {
-                newIds = activeIds.filter((item) => item !== id);
-            } else {
-                newIds = [...activeIds, id];
-            }
-        }
-
+    const updateFilters = (newValues: string[]) => {
         router.get(
             window.location.pathname,
             {
-                ...filters,
-                [filterKey]: newIds.length > 0 ? newIds.join(',') : null,
+                ...currentFilters,
+                [field.key]: newValues.length > 0 ? newValues.join(',') : null,
                 page: 1,
             },
-            {
-                preserveState: true,
-                preserveScroll: true,
-                replace: true,
-            },
+            { preserveState: true, preserveScroll: true, replace: true },
         );
     };
 
+    const toggleFilter = (val: string) => {
+        const newValues = activeValues.includes(val)
+            ? activeValues.filter((v) => v !== val)
+            : [...activeValues, val];
+        updateFilters(newValues);
+    };
+
     return (
-        <div className="mb-6">
-            <ul className="flex flex-wrap justify-center gap-2 font-medium text-sm">
-                <li>
-                    <Button
-                        variant={
-                            (activeIds.length === 0
-                                ? 'default'
-                                : 'secondary') as any
-                        }
-                        size="sm"
-                        onClick={() => handleFilter(null)}
-                        className="cursor-pointer"
-                    >
-                        {allLabel}
-                    </Button>
-                </li>
-                {items.map((item) => (
-                    <li key={item.id}>
-                        <Button
-                            variant={
-                                (activeIds.includes(item.id)
-                                    ? 'default'
-                                    : 'secondary') as any
-                            }
-                            size="sm"
-                            onClick={() => handleFilter(item.id)}
-                            className="cursor-pointer"
+        <Popover>
+            <PopoverTrigger asChild>
+                <Button
+                    variant="ghost"
+                    className={`mx-auto flex w-fit cursor-pointer items-center justify-center gap-2 data-[state=open]:bg-accent ${activeValues.length > 0 ? 'text-foreground' : 'text-foreground/50'}`}
+                >
+                    <span className="text-foreground">{field.name}</span>
+                    <Filter
+                        size={12}
+                        fill={activeValues.length > 0 ? 'currentColor' : 'none'}
+                    />
+                </Button>
+            </PopoverTrigger>
+
+            <PopoverContent
+                className="w-fit min-w-[180px] overflow-hidden border-muted/40 p-0 shadow-2xl"
+                align="center"
+            >
+                <div className="flex items-center justify-between bg-muted/20 p-2.5 px-3">
+                    <span className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
+                        {field.name}
+                    </span>
+                    {activeValues.length > 0 && (
+                        <button
+                            onClick={() => updateFilters([])}
+                            className="text-[10px] font-semibold text-primary transition-colors hover:text-primary/80"
                         >
-                            {item.name}
-                        </Button>
-                    </li>
-                ))}
-            </ul>
-        </div>
+                            RESET
+                        </button>
+                    )}
+                </div>
+
+                <div className="p-1.5">
+                    {field.options?.map((opt: any) => {
+                        const isSelected = activeValues.includes(
+                            String(opt.name),
+                        );
+                        return (
+                            <div
+                                key={opt.name}
+                                className={`group flex cursor-pointer items-center justify-between rounded-md px-2 py-1.5 text-sm transition-all ${
+                                    isSelected
+                                        ? 'bg-primary/10 font-medium text-primary'
+                                        : 'text-foreground/70 hover:bg-muted hover:text-foreground'
+                                }`}
+                                onClick={() => toggleFilter(String(opt.name))}
+                            >
+                                <div className="flex items-center gap-2">
+                                    <div
+                                        className={`h-1.5 w-1.5 rounded-full transition-all ${
+                                            isSelected
+                                                ? 'scale-100 bg-primary'
+                                                : 'scale-0 bg-transparent group-hover:scale-100 group-hover:bg-muted-foreground/30'
+                                        }`}
+                                    />
+                                    <span>{opt.name}</span>
+                                </div>
+                                {isSelected && (
+                                    <div className="text-[10px] opacity-60">
+                                        ✓
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            </PopoverContent>
+        </Popover>
     );
 }

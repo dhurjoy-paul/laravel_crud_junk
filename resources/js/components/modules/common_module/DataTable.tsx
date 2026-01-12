@@ -8,12 +8,20 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { router } from '@inertiajs/react';
-import { ArrowUpDown, PencilLine, Trash2 } from 'lucide-react';
+import { router, usePage } from '@inertiajs/react';
+import {
+    ArrowDown,
+    ArrowUp,
+    ArrowUpDown,
+    FilterX,
+    PencilLine,
+    Trash2,
+} from 'lucide-react';
 import { useState } from 'react';
 import { ColumnSettingsDropdown } from './columnSettingsDropdown';
 import { DataTableCell } from './DataTableCell';
 import { useTableSettings } from './hooks/useColumnSettings';
+import { ReusableFilter } from './ReusableFilter';
 import { ModuleConfig } from './types';
 
 export default function DataTable({
@@ -105,12 +113,29 @@ export default function DataTable({
         );
     };
 
+    const handleClearFilters = () => {
+        router.get(
+            window.location.pathname,
+            {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            },
+        );
+    };
+
+    const { url } = usePage();
+    const queryParams = new URLSearchParams(url.split('?')[1] || '');
+    const currentSortColumn = queryParams.get('column');
+    const currentSortDirection = queryParams.get('sort');
+
     return (
         <div className="space-y-4">
             {/* bulk delete toolbar */}
             {showActions === true && selectedIds.length > 0 && (
-                <div className="flex justify-between items-center bg-muted/50 slide-in-from-top-1 p-2 px-4 border rounded-lg animate-in fade-in">
-                    <span className="font-medium text-sm">
+                <div className="flex animate-in items-center justify-between rounded-lg border bg-muted/50 p-2 px-4 fade-in slide-in-from-top-1">
+                    <span className="text-sm font-medium">
                         {selectedIds.length} {module.module_name} selected
                     </span>
                     <div className="flex gap-2">
@@ -133,17 +158,28 @@ export default function DataTable({
             )}
 
             {/* customize columns */}
-            <div className="flex justify-end items-center gap-2">
-                <ColumnSettingsDropdown
-                    columnSettings={columnSettings}
-                    module={module}
-                    onToggle={toggleColumn}
-                    onMove={moveColumn}
-                />
+            <div className="flex flex-col items-center justify-end gap-3 sm:flex-row">
+                <Button
+                    onClick={handleClearFilters}
+                    variant="secondary"
+                    size="sm"
+                    className="ml-auto w-fit cursor-pointer"
+                >
+                    <FilterX size={24} color="currentColor" strokeWidth={2} />
+                    Clear all filters
+                </Button>
+                <div>
+                    <ColumnSettingsDropdown
+                        columnSettings={columnSettings}
+                        module={module}
+                        onToggle={toggleColumn}
+                        onMove={moveColumn}
+                    />
+                </div>
             </div>
 
             {/* main table */}
-            <div className="border rounded-md w-full overflow-hidden">
+            <div className="w-full overflow-hidden rounded-md border">
                 <Table>
                     <TableHeader className="bg-muted/50">
                         <TableRow>
@@ -157,38 +193,73 @@ export default function DataTable({
                                             )
                                         }
                                         onCheckedChange={toggleSelectAll}
-                                        className="border-2 border-foreground cursor-pointer"
+                                        className="cursor-pointer border-2 border-foreground"
                                     />
                                 </TableHead>
                             )}
 
-                            {visibleFields.map((field, index) => (
-                                <TableHead
-                                    key={field.key}
-                                    className={`font-semibold ${index === 0 ? 'text-left' : 'text-center'}`}
-                                >
-                                    {field.sort ? (
-                                        <Button
-                                            onClick={() =>
-                                                handleSort(field.key)
-                                            }
-                                            variant="ghost"
-                                            className="flex justify-center items-center gap-2 mx-auto w-fit cursor-pointer"
+                            {visibleFields.map((field, index) => {
+                                const isSorted =
+                                    currentSortColumn === field.key;
+
+                                return (
+                                    <TableHead
+                                        key={field.key}
+                                        className={`font-semibold ${index === 0 ? 'text-left' : 'text-center'}`}
+                                    >
+                                        <div
+                                            className={`flex items-center ${index === 0 ? 'justify-start' : 'justify-center'}`}
                                         >
-                                            <span>{field.name}</span>
-                                            <ArrowUpDown
-                                                size={14}
-                                                className="font-bold text-muted-foreground"
-                                            />
-                                        </Button>
-                                    ) : (
-                                        field.name
-                                    )}
-                                </TableHead>
-                            ))}
+                                            {field.sort ? (
+                                                <Button
+                                                    onClick={() =>
+                                                        handleSort(field.key)
+                                                    }
+                                                    variant="ghost"
+                                                    className={`group mx-auto flex w-fit cursor-pointer items-center justify-center gap-2 transition-colors ${isSorted ? 'text-foreground' : 'text-foreground/50'}`}
+                                                >
+                                                    <span className="text-foreground">
+                                                        {field.name}
+                                                    </span>
+
+                                                    {isSorted ? (
+                                                        currentSortDirection ===
+                                                        'asc' ? (
+                                                            <ArrowUp
+                                                                size={14}
+                                                                className="animate-in text-primary zoom-in-50"
+                                                            />
+                                                        ) : (
+                                                            <ArrowDown
+                                                                size={14}
+                                                                className="animate-in text-primary zoom-in-50"
+                                                            />
+                                                        )
+                                                    ) : (
+                                                        <ArrowUpDown
+                                                            size={14}
+                                                            className="text-muted-foreground group-hover:text-foreground"
+                                                        />
+                                                    )}
+                                                </Button>
+                                            ) : (field.input_type ===
+                                                  'select' ||
+                                                  'manualSelect') &&
+                                              field.options ? (
+                                                <ReusableFilter
+                                                    field={field}
+                                                    currentFilters={filters}
+                                                />
+                                            ) : (
+                                                <span>{field.name}</span>
+                                            )}
+                                        </div>
+                                    </TableHead>
+                                );
+                            })}
 
                             {showActions === true && (
-                                <TableHead className="font-semibold text-center">
+                                <TableHead className="text-center font-semibold">
                                     Actions
                                 </TableHead>
                             )}
@@ -205,7 +276,7 @@ export default function DataTable({
                                     {showActions === true && (
                                         <TableCell className="text-center">
                                             <Checkbox
-                                                className="border-[1.5px] border-foreground cursor-pointer"
+                                                className="cursor-pointer border-[1.5px] border-foreground"
                                                 checked={selectedIds.includes(
                                                     row.id,
                                                 )}
@@ -248,12 +319,12 @@ export default function DataTable({
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    className="hover:bg-destructive/50 text-destructive-foreground hover:text-destructive-foreground"
+                                                    className="text-destructive-foreground hover:bg-destructive/50 hover:text-destructive-foreground"
                                                     onClick={() =>
                                                         handleDelete(row.id)
                                                     }
                                                 >
-                                                    <Trash2 className="w-4 h-4" />
+                                                    <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
                                         </TableCell>
@@ -264,7 +335,7 @@ export default function DataTable({
                             <TableRow>
                                 <TableCell
                                     colSpan={visibleFields.length + 2}
-                                    className="h-24 text-muted-foreground text-center"
+                                    className="h-24 text-center text-muted-foreground"
                                 >
                                     No {module.module_name.toLowerCase()} found.
                                 </TableCell>

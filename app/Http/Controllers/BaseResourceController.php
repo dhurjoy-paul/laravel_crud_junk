@@ -20,40 +20,44 @@ abstract class BaseResourceController extends Controller
   protected $slugColumn;            // which column will create the slug? 'title', 'name', 'product_name'
   protected $fileColumn = 'image';  // image column name, default to image
 
-  protected $filterKey = null;      // (optional) 'category_id', 'genre_id'
-  protected $filterName = null;     // (optional) 'category', 'genre'
+  // no need of filterKey and filterName anymore
+  protected $filterKey = null;
+  protected $filterName = null;
+
+  // these needed if wanna send any database table data to react 
   protected $relationModel = null;  // (optional) Category::class, Genre::class
-  protected $relationName = null;   // (optional) 'categories', 'genres' 
-                                    // (for the frontend prop)
+  protected $relationName = null;   // (optional) 'categories', 'genres' (for the frontend prop)
 
   /**
    * Display a listing of the resource.
    */
   public function index(Request $request)
   {
+    $allFilters = $request->all();
     $perPage = $request->input('per_page', 5);
     $search = $request->input('search');
-    $filterValue = $this->filterName ? $request->input($this->filterName) : null;
-
     $sortColumn = $request->input('column', 'created_at');
     $sortDirection = $request->input('sort', 'desc');
 
-    $query = $this->model::query()
-      ->when($search, function ($q) use ($search) {
-        $q->where(function ($subQuery) use ($search) {
-          foreach ($this->searchable as $column) {
-            $subQuery->orWhere($column, 'like', "%{$search}%");
-          }
-        });
-      })
-      ->when(($this->filterKey && $filterValue), function ($query) use ($filterValue) {
-        if (str_contains($filterValue, ',')) {
-          $ids = explode(',', $filterValue);
-          $query->whereIn($this->filterKey, $ids);
-        } else {
-          $query->where($this->filterKey, $filterValue);
+    $query = $this->model::query();
+
+    $query->when($search, function ($q) use ($search) {
+      $q->where(function ($subQuery) use ($search) {
+        foreach ($this->searchable as $column) {
+          $subQuery->orWhere($column, 'like', "%{$search}%");
         }
       });
+    });
+
+    foreach ($allFilters as $key => $value) {
+      if (in_array($key, ['search', 'per_page', 'column', 'sort', 'page'])) continue;
+      if (!$value) continue;
+
+      if (Schema::hasColumn((new $this->model)->getTable(), $key)) {
+        $values = explode(',', $value);
+        $query->whereIn($key, $values);
+      }
+    }
 
     if ($sortColumn) {
       $query->orderBy($sortColumn, $sortDirection);
@@ -65,7 +69,7 @@ abstract class BaseResourceController extends Controller
 
     $inertiaData = [
       'items' => $items,
-      'filters' => $request->only(['search', 'per_page', $this->filterName]),
+      'filters' => $request->all(),
     ];
 
     if ($this->relationName && $this->relationModel) {

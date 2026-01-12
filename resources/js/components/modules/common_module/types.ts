@@ -1,27 +1,3 @@
-export interface ModuleField {
-    name: string; // table header & form labels
-    key: string; // this is DB column name ('published_at', 'title')
-    input_type:
-        | 'tinymce'
-        | 'textarea'
-        | 'select'
-        | 'manualSelect'
-        | 'checkbox'
-        | 'file'
-        | 'text'
-        | 'email'
-        | 'number'
-        | 'date'
-        | 'tel';
-    options?: any[]; // this is for category / genre
-    css_style?: string; // custom CSS classes
-    custom_style?: 'badge' | 'truncate'; // custom name style
-    form_sn?: number; // form input serial no
-    table_hide?: boolean; // hide from table
-    form_hide?: boolean; // hide from form
-    sort?: boolean; // true, if want sorting on column
-}
-
 export interface ModuleConfig {
     module_name: string; // Posts
     route_name: string; // '/posts'  // also have to make a method like /posts/bulk
@@ -29,6 +5,41 @@ export interface ModuleConfig {
     filter_name?: string;
     actions?: boolean;
     fields: ModuleField[];
+}
+
+export type ModuleField = SortableField | NonSortableField;
+
+interface BaseField {
+    name: string;
+    key: string;
+    options?: any[];
+    css_style?: string;
+    custom_style?: 'badge' | 'truncate';
+    form_sn?: number;
+    table_hide?: boolean;
+    form_hide?: boolean;
+}
+
+type SelectTypes = 'select' | 'manualSelect';
+type OtherTypes =
+    | 'tinymce'
+    | 'textarea'
+    | 'checkbox'
+    | 'file'
+    | 'text'
+    | 'email'
+    | 'number'
+    | 'date'
+    | 'tel';
+
+interface SortableField extends BaseField {
+    input_type: OtherTypes;
+    sort?: boolean;
+}
+
+interface NonSortableField extends BaseField {
+    input_type: SelectTypes;
+    sort?: false; // Force sort to be false or undefined
 }
 
 // each category, each genre

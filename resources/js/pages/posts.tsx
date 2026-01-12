@@ -45,7 +45,6 @@ export default function Posts({
                 custom_style: 'badge',
                 options: categories,
                 form_sn: 2,
-                sort: true,
             },
             {
                 name: 'Content',

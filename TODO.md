@@ -14,7 +14,7 @@
     - [x] Make filter optional
     - [x] Implement single generic filtering.
     - [x] For each filter, multiple selection have to implement.
-    - [ ] Implement multiple generic filtering.
+    - [x] Implement multiple generic filtering.
     - [ ] Customize by `ModuleConfig`.
 - [x] **Controller Customization:** Find a way to optionally override/customize controllers.
 

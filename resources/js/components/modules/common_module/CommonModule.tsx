@@ -3,11 +3,10 @@ import { Head } from '@inertiajs/react';
 import { useState } from 'react';
 import { ModuleConfig, PaginatedData } from './types';
 
-import DataTable from '@/components/modules/common_module/DataTable';
-import FormDrawer from '@/components/modules/common_module/FormDrawer';
-import Pagination from '@/components/modules/common_module/Pagination';
-import Search from '@/components/modules/common_module/Search';
-import ReusableFilter from './ReusableFilter';
+import DataTable from './DataTable';
+import FormDrawer from './FormDrawer';
+import Pagination from './Pagination';
+import Search from './Search';
 
 export default function CommonModule({
     module,
@@ -36,25 +35,11 @@ export default function CommonModule({
         setIsDrawerOpen(true);
     };
 
-    const filter = `${module.filter_name}`;
-
     return (
         <>
             <Head title={module.module_name} />
-            <div className="flex flex-col flex-1 gap-4 p-4 rounded-xl h-full overflow-x-auto">
-                {/* filter tabs */}
-                {filter && categories && (
-                    <div className="mx-auto mb-2 w-full max-w-fit">
-                        <ReusableFilter
-                            items={categories}
-                            activeValue={filters[filter]}
-                            filters={filters}
-                            filterKey={module.filter_name}
-                        />
-                    </div>
-                )}
-
-                <div className="flex justify-between items-center mx-auto mb-4 w-full">
+            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+                <div className="mx-auto my-3 flex w-full items-center justify-between">
                     {/* reusable search component */}
                     <Search
                         filters={filters}

@@ -13,11 +13,12 @@ import {
     ArrowDown,
     ArrowUp,
     ArrowUpDown,
-    FilterX,
     PencilLine,
+    RefreshCcw,
     Trash2,
 } from 'lucide-react';
 import { useState } from 'react';
+import { ActiveFilters } from './ActiveFilters';
 import { ColumnSettingsDropdown } from './columnSettingsDropdown';
 import { DataTableCell } from './DataTableCell';
 import { useTableSettings } from './hooks/useColumnSettings';
@@ -35,6 +36,7 @@ export default function DataTable({
     onEdit: any;
     filters: any;
 }) {
+    const { fields } = module || {};
     const { columnSettings, visibleFields, toggleColumn, moveColumn } =
         useTableSettings(module);
     const showActions = module.actions ?? true;
@@ -132,11 +134,47 @@ export default function DataTable({
 
     return (
         <div className="space-y-4">
+            {/* active filters + table customize tools */}
+            <div className="flex flex-wrap items-end justify-between gap-4 border-b px-1 py-2">
+                <div className="min-w-0 flex-1">
+                    <ActiveFilters fields={fields} filters={filters} />
+                </div>
+
+                <div className="flex shrink-0 items-center gap-2 border-l pl-4">
+                    {/* reset table button */}
+                    <Button
+                        onClick={handleClearFilters}
+                        variant="secondary"
+                        size="sm"
+                        className="ml-auto w-fit cursor-pointer"
+                    >
+                        <RefreshCcw
+                            size={24}
+                            color="currentColor"
+                            strokeWidth={2}
+                        />
+                        Reset Table
+                    </Button>
+
+                    {/* customize columns */}
+                    <div>
+                        <ColumnSettingsDropdown
+                            columnSettings={columnSettings}
+                            module={module}
+                            onToggle={toggleColumn}
+                            onMove={moveColumn}
+                        />
+                    </div>
+                </div>
+            </div>
+
             {/* bulk delete toolbar */}
             {showActions === true && selectedIds.length > 0 && (
                 <div className="flex animate-in items-center justify-between rounded-lg border bg-muted/50 p-2 px-4 fade-in slide-in-from-top-1">
                     <span className="text-sm font-medium">
-                        {selectedIds.length} {module.module_name} selected
+                        {selectedIds.length}&nbsp;&nbsp;
+                        {module.model_name.toLowerCase()}
+                        {selectedIds.length > 1 && 's'} selected
                     </span>
                     <div className="flex gap-2">
                         <Button
@@ -156,27 +194,6 @@ export default function DataTable({
                     </div>
                 </div>
             )}
-
-            {/* customize columns */}
-            <div className="flex flex-col items-center justify-end gap-3 sm:flex-row">
-                <Button
-                    onClick={handleClearFilters}
-                    variant="secondary"
-                    size="sm"
-                    className="ml-auto w-fit cursor-pointer"
-                >
-                    <FilterX size={24} color="currentColor" strokeWidth={2} />
-                    Clear all filters
-                </Button>
-                <div>
-                    <ColumnSettingsDropdown
-                        columnSettings={columnSettings}
-                        module={module}
-                        onToggle={toggleColumn}
-                        onMove={moveColumn}
-                    />
-                </div>
-            </div>
 
             {/* main table */}
             <div className="w-full overflow-hidden rounded-md border">

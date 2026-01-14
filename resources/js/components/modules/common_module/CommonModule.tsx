@@ -1,12 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
-import { ModuleConfig, PaginatedData } from './types';
 
 import DataTable from './DataTable';
 import FormDrawer from './FormDrawer';
 import Pagination from './Pagination';
 import Search from './Search';
+import { ModuleConfig, PaginatedData } from './types';
 
 export default function CommonModule({
     module,
@@ -39,7 +39,7 @@ export default function CommonModule({
         <>
             <Head title={module.module_name} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="mx-auto my-3 flex w-full items-center justify-between">
+                <div className="mx-auto mt-5 flex w-full items-center justify-between">
                     {/* reusable search component */}
                     <Search
                         filters={filters}

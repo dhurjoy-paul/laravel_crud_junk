@@ -2,6 +2,8 @@
 
 This repository includes a reusable **Common Module CRUD system** designed to accelerate backend–frontend CRUD development using Laravel controllers, React (Inertia) and WayFinder.
 
+![Example CRUD Table](example.png)
+
 ## Table of Contents
 
 - [Use and update the module](#using-the-common-module-without-cloning-the-repository)
@@ -126,7 +128,7 @@ export interface ModuleField {
         | 'manualSelect' // This select's options can be made on frontend
         | 'checkbox' // For boolean values
         | 'file' // now supports single 'image'
-    //  | 'files' // coming soon
+        //  | 'files' // coming soon
         | 'text'
         | 'email'
         | 'number'

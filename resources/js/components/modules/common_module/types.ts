@@ -39,7 +39,7 @@ interface SortableField extends BaseField {
 
 interface NonSortableField extends BaseField {
     input_type: SelectTypes;
-    sort?: false; // Force sort to be false or undefined
+    sort?: false;
 }
 
 // each category, each genre

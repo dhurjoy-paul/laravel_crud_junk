@@ -10,6 +10,9 @@
 - [x] **Columns Visibility** Implemented column visibility with sorting.
 - [x] **Configurable Sorting:** Implemented custom column-wise sorting, controlled by `ModuleConfig`
 - [x] **Custom Multi Search** Implemented custom multi search by base controller
+- [ ] **Single Column-wise Search** Have to implement specific generic column-wise search.
+      (example: Only search available_copies = 0)
+- [ ] **Show the Available Result** Implement available result on each filter option.
 - [ ] **Generic Multi-Filter System:** _Example Case:_ Filter by Author Name + Genres.
     - [x] Make filter optional
     - [x] Implement single generic filtering.

@@ -5,21 +5,19 @@ import {
 } from '@/components/modules/common_module/types';
 import AppLayout from '@/layouts/app-layout';
 import books from '@/routes/books';
-import { Book, BreadcrumbItem, Genre } from '@/types';
+import { Book, BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'All Books',
+        title: 'Books',
         href: books.index().url,
     },
 ];
 
 export default function Books({
-    genres,
     items: allBooks,
     filters,
 }: {
-    genres: Genre[];
     items: PaginatedData<Book>;
     filters?: any;
 }) {
@@ -27,19 +25,20 @@ export default function Books({
         module_name: 'Books',
         route_name: '/books',
         model_name: 'Book',
-        filter_name: 'genre',
         fields: [
             {
                 name: 'Title',
                 key: 'title',
                 input_type: 'text',
                 form_sn: 1,
+                sort: true,
             },
             {
                 name: 'Author',
                 key: 'author',
                 input_type: 'text',
                 form_sn: 2,
+                sort: true,
             },
             {
                 name: 'ISBN',
@@ -49,60 +48,124 @@ export default function Books({
                 sort: true,
             },
             {
-                name: 'Description',
-                key: 'description',
-                input_type: 'textarea',
-                form_sn: 4,
-                table_hide: true,
+                name: 'Genre',
+                key: 'genre',
+                input_type: 'manualSelect',
+                custom_style: 'badge',
+                options: genreOptions, // coming from this file's bottom not from DB
+                form_sn: 3,
             },
             {
-                name: 'Price',
-                key: 'price',
+                name: 'Total Quantity',
+                key: 'quantity',
                 input_type: 'number',
                 form_sn: 5,
                 sort: true,
             },
             {
-                name: 'Quantity',
-                key: 'quantity',
+                name: 'Available',
+                key: 'available_copies',
                 input_type: 'number',
                 form_sn: 6,
                 sort: true,
             },
             {
-                name: 'Cover Image',
-                key: 'image',
-                input_type: 'file',
+                name: 'Floor',
+                key: 'floor',
+                input_type: 'text',
                 form_sn: 7,
-                table_hide: true,
+            },
+            {
+                name: 'Section',
+                key: 'section',
+                input_type: 'text',
+                form_sn: 8,
+            },
+            {
+                name: 'Rack',
+                key: 'rack',
+                input_type: 'text',
+                form_sn: 9,
+            },
+            {
+                name: 'Price',
+                key: 'price',
+                input_type: 'number',
+                form_sn: 10,
+                sort: true,
             },
             {
                 name: 'Published Date',
                 key: 'published_date',
                 input_type: 'date',
-                form_sn: 8,
-                sort: true,
+                form_sn: 11,
             },
             {
-                name: 'Genre',
-                key: 'genre_name',
-                input_type: 'select',
-                custom_style: 'badge',
-                options: genres,
-                form_sn: 9,
+                name: 'Book Image',
+                key: 'image',
+                input_type: 'file',
+                form_sn: 12,
+                table_hide: true,
+            },
+            {
+                name: 'Description',
+                key: 'description',
+                input_type: 'textarea',
+                form_sn: 13,
+                table_hide: true,
             },
         ],
     };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <div>
                 <CommonModule
                     module={BookModule}
                     filters={filters}
-                    categories={genres}
                     items={allBooks}
                 />
             </div>
         </AppLayout>
     );
 }
+
+const genreOptions = [
+    {
+        id: 'Action and Adventure',
+        name: 'Action and Adventure',
+    },
+    { id: 'Art & Photography', name: 'Art & Photography' },
+    { id: 'Biography', name: 'Biography' },
+    {
+        id: 'Business & Economics',
+        name: 'Business & Economics',
+    },
+    { id: "Children's Fiction", name: "Children's Fiction" },
+    { id: 'Classic', name: 'Classic' },
+    { id: 'Contemporary', name: 'Contemporary' },
+    { id: 'Cookbooks', name: 'Cookbooks' },
+    { id: 'Crime', name: 'Crime' },
+    { id: 'Dystopian', name: 'Dystopian' },
+    { id: 'Fantasy', name: 'Fantasy' },
+    { id: 'Graphic Novel', name: 'Graphic Novel' },
+    { id: 'History', name: 'History' },
+    { id: 'Horror', name: 'Horror' },
+    { id: 'Humor', name: 'Humor' },
+    { id: 'Literary Fiction', name: 'Literary Fiction' },
+    { id: 'Memoir', name: 'Memoir' },
+    { id: 'Mystery', name: 'Mystery' },
+    { id: 'Non-fiction', name: 'Non-fiction' },
+    { id: 'Philosophy', name: 'Philosophy' },
+    { id: 'Poetry', name: 'Poetry' },
+    { id: 'Psychology', name: 'Psychology' },
+    { id: 'Science', name: 'Science' },
+    { id: 'Science Fiction', name: 'Science Fiction' },
+    { id: 'Self-Help', name: 'Self-Help' },
+    { id: 'Short Story', name: 'Short Story' },
+    { id: 'Spirituality', name: 'Spirituality' },
+    { id: 'Thriller', name: 'Thriller' },
+    { id: 'Travel', name: 'Travel' },
+    { id: 'True Crime', name: 'True Crime' },
+    { id: 'Western', name: 'Western' },
+];

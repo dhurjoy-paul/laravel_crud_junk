@@ -20,29 +20,48 @@ export interface Headphone {
     location_rack: string; // Which aisle/shelf in the shop
 }
 
-interface Category {
+export interface BookLoan {
     id: number;
-    name: string;
-}
+    student_id: number;
+    book_id: number;
+    loan_date: string | Date;
+    due_date: string | Date;
+    returned_date?: string | Date | null; // nullable until book is returned
+    created_at?: string | Date;
+    updated_at?: string | Date;
 
-interface Genre {
-    id: number;
-    name: string;
+    student?: Student; // for inertia eager loading
+    book?: Book; // for inertia eager loading
 }
 
 export interface Book {
     id: number;
     slug: string;
     title: string;
+    image?: string | null;
     author?: string | null;
     isbn?: string | null;
     description?: string | null;
     price?: number | null;
     quantity: number;
-    image?: string | null;
+    available_copies: number;
+    genre: string;
+    floor: string;
+    section: string;
+    rack: string;
     published_date?: string | Date | null;
-    genre_id?: number | null;
-    genre_name?: number | null;
+    created_at?: string | Date;
+    updated_at?: string | Date;
+}
+
+export interface Student {
+    id: number;
+    name: string;
+    email: string;
+    image?: string | null;
+    student_card_id?: string | number | null;
+    is_active?: boolean;
+    max_borrow_limit: number;
     created_at?: string | Date;
     updated_at?: string | Date;
 }
@@ -59,6 +78,16 @@ interface Post {
     user_id: number;
 
     published_at: string;
+}
+
+interface Category {
+    id: number;
+    name: string;
+}
+
+interface Genre {
+    id: number;
+    name: string;
 }
 
 export interface Auth {

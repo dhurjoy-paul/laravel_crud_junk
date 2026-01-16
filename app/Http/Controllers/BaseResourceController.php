@@ -17,16 +17,21 @@ abstract class BaseResourceController extends Controller
   protected $searchable = [];       // ['title', 'content', 'isbn']
 
   protected $isUserId = false;      // boolean, if database table need/has user_id column
-  protected $slugColumn;            // which column will create the slug? 'title', 'name', 'product_name'
+  protected $slugColumn = null;     // which column will create the slug? 'title', 'name', 'product_name'
   protected $fileColumn = 'image';  // image column name, default to image
-
-  // no need of filterKey and filterName anymore
-  protected $filterKey = null;
-  protected $filterName = null;
 
   // these needed if wanna send any database table data to react 
   protected $relationModel = null;  // (optional) Category::class, Genre::class
   protected $relationName = null;   // (optional) 'categories', 'genres' (for the frontend prop)
+
+  // for eager loading relationships in the table
+  protected $load = [];             // ['student', 'book']
+  // for multiple dropdowns/lists in the frontend ['props name' => desired model]
+  protected $extraData = [];        // ['students' => Student::class, 'books' => Book::class]
+
+  // no need of filterKey and filterName anymore
+  protected $filterKey = null;
+  protected $filterName = null;
 
   /**
    * Display a listing of the resource.
@@ -39,16 +44,26 @@ abstract class BaseResourceController extends Controller
     $sortColumn = $request->input('column', 'created_at');
     $sortDirection = $request->input('sort', 'desc');
 
-    $query = $this->model::query();
+    // initializing query with eager loading
+    $query = $this->model::with($this->load);
 
+    // 1. search query
     $query->when($search, function ($q) use ($search) {
       $q->where(function ($subQuery) use ($search) {
         foreach ($this->searchable as $column) {
-          $subQuery->orWhere($column, 'like', "%{$search}%");
+          if (str_contains($column, '.')) {
+            [$relation, $relCol] = explode('.', $column);
+            $subQuery->orWhereHas($relation, function ($rq) use ($relCol, $search) {
+              $rq->where($relCol, 'like', "%{$search}%");
+            });
+          } else {
+            $subQuery->orWhere($column, 'like', "%{$search}%");
+          }
         }
       });
     });
 
+    // 2. filter queries
     foreach ($allFilters as $key => $value) {
       if (in_array($key, ['search', 'per_page', 'column', 'sort', 'page'])) continue;
       if (!$value) continue;
@@ -59,12 +74,14 @@ abstract class BaseResourceController extends Controller
       }
     }
 
-    if ($sortColumn) {
+    // 3. sort query
+    if ($sortColumn && Schema::hasColumn((new $this->model)->getTable(), $sortColumn)) {
       $query->orderBy($sortColumn, $sortDirection);
     } else {
       $query->latest();
     }
 
+    // 4. pagination query
     $items = $query->paginate($perPage)->withQueryString()->onEachSide(1);
 
     $inertiaData = [
@@ -72,9 +89,16 @@ abstract class BaseResourceController extends Controller
       'filters' => $request->all(),
     ];
 
-    if ($this->relationName && $this->relationModel) {
-      $inertiaData[$this->relationName] = $this->relationModel::all();
+    if (!empty($this->extraData)) {
+      foreach ($this->extraData as $propName => $modelClass) {
+        $inertiaData[$propName] = $modelClass::all();
+      }
     }
+
+    // cant remove relationName, relationModel right
+    // if ($this->relationName && $this->relationModel) {
+    //   $inertiaData[$this->relationName] = $this->relationModel::all();
+    // }
 
     return Inertia::render($this->viewName, $inertiaData);
   }
@@ -91,6 +115,14 @@ abstract class BaseResourceController extends Controller
       $data[$fileColumn] = $request->file($fileColumn)->store($this->folderName, 'public');
     }
 
+    if ($this->isUserId) {
+      $data['user_id'] = Auth::id();
+    }
+
+    if ($this->slugColumn) {
+      $data['slug'] = Str::slug($data[$this->slugColumn]) . '-' . Str::random(5);
+    }
+
     if ($this->filterKey && $this->relationModel) {
       $columnName = str_replace('_id', '_name', $this->filterKey);
 
@@ -104,14 +136,6 @@ abstract class BaseResourceController extends Controller
           $data[$columnName] = null;
         }
       }
-    }
-
-    if ($this->isUserId) {
-      $data['user_id'] = Auth::id();
-    }
-
-    if ($this->slugColumn) {
-      $data['slug'] = Str::slug($data[$this->slugColumn]) . '-' . Str::random(5);
     }
 
     $this->model::create($data);

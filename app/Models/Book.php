@@ -15,8 +15,24 @@ class Book extends Model
         'description',
         'price',
         'quantity',
+        'available_copies',
+        'genre',
         'published_date',
-        'genre_name',
-        'genre_id',
+        'floor',
+        'section',
+        'rack'
     ];
+
+    protected $casts = [
+        'price' => 'decimal:2',
+        'quantity' => 'integer',
+        'available_copies' => 'integer',
+        'published_date' => 'datetime',
+    ];
+
+    // defined the relationship with BookLoan
+    public function loans()
+    {
+        return $this->hasMany(BookLoan::class);
+    }
 }

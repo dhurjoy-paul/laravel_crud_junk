@@ -259,22 +259,13 @@ Update the generated migration to match the model and TS interface.
 
 ---
 
-### Step 5: Extend `BaseResourceController`
+### Step 5: Run Database Migration
 
-Make the controller extend `BaseResourceController` and configure module behavior.
+Finally, migrate the database:
 
-📄 `app/Http/Controllers/HeadphoneController.php`
-
-Key properties to review:
-
-- `$model`
-- `$viewName`
-- `$folderName`
-- `$searchable`
-- `$slugColumn`
-- `$fileColumn`
-
-Also define validation rules via `getValidationRules()`.
+```bash
+php artisan migrate
+```
 
 ---
 
@@ -327,13 +318,22 @@ Responsibilities:
 
 ---
 
-### Step 9: Run Database Migration
+### Step 6: Extend `BaseResourceController`
 
-Finally, migrate the database:
+Make the controller extend `BaseResourceController` and configure module behavior.
 
-```bash
-php artisan migrate
-```
+📄 `app/Http/Controllers/HeadphoneController.php`
+
+Key properties to review:
+
+- `$model`
+- `$viewName`
+- `$folderName`
+- `$searchable`
+- `$slugColumn`
+- `$fileColumn`
+
+Also define validation rules via `getValidationRules()`.
 
 ---
 

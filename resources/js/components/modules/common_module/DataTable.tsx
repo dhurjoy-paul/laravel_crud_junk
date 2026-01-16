@@ -13,6 +13,7 @@ import {
     ArrowDown,
     ArrowUp,
     ArrowUpDown,
+    FilterX,
     PencilLine,
     RefreshCcw,
     Trash2,
@@ -22,6 +23,7 @@ import { ActiveFilters } from './ActiveFilters';
 import { ColumnSettingsDropdown } from './columnSettingsDropdown';
 import { DataTableCell } from './DataTableCell';
 import { useTableSettings } from './hooks/useColumnSettings';
+import { useFilters } from './hooks/useFilters';
 import { ReusableFilter } from './ReusableFilter';
 import { ModuleConfig } from './types';
 
@@ -36,12 +38,14 @@ export default function DataTable({
     onEdit: any;
     filters: any;
 }) {
+    const [selectedIds, setSelectedIds] = useState<(string | number)[]>([]);
     const { fields } = module || {};
+    const rows = allData?.data || [];
+    const showActions = module.actions ?? true;
+
     const { columnSettings, visibleFields, toggleColumn, moveColumn } =
         useTableSettings(module);
-    const showActions = module.actions ?? true;
-    const [selectedIds, setSelectedIds] = useState<(string | number)[]>([]);
-    const rows = allData?.data || [];
+    const { hasActiveFilters, clearFilters } = useFilters(fields, filters);
 
     const toggleSelectAll = () => {
         const currentPageIds = rows.map((r: any) => r.id);
@@ -115,18 +119,6 @@ export default function DataTable({
         );
     };
 
-    const handleClearFilters = () => {
-        router.get(
-            window.location.pathname,
-            {},
-            {
-                preserveState: true,
-                preserveScroll: true,
-                replace: true,
-            },
-        );
-    };
-
     const { url } = usePage();
     const queryParams = new URLSearchParams(url.split('?')[1] || '');
     const currentSortColumn = queryParams.get('column');
@@ -141,12 +133,24 @@ export default function DataTable({
                 </div>
 
                 <div className="flex shrink-0 items-center gap-2 border-l pl-4">
+                    {hasActiveFilters && (
+                        <Button
+                            onClick={() => clearFilters()}
+                            variant="destructive"
+                            size="sm"
+                            className="ml-auto w-fit cursor-pointer"
+                        >
+                            <FilterX size={12} />
+                            Clear all filters
+                        </Button>
+                    )}
+
                     {/* reset table button */}
                     <Button
-                        onClick={handleClearFilters}
+                        onClick={() => clearFilters(true)}
                         variant="secondary"
                         size="sm"
-                        className="ml-auto w-fit cursor-pointer"
+                        className={`w-fit cursor-pointer ${hasActiveFilters ? '' : 'ml-auto'}`}
                     >
                         <RefreshCcw
                             size={24}

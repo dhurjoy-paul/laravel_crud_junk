@@ -3,13 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import {
     Sheet,
@@ -22,7 +15,8 @@ import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { useForm } from '@inertiajs/react';
 import { Editor } from '@tinymce/tinymce-react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import ComboboxField from './ComboboxField';
 import { ModuleConfig } from './types';
 
 const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -38,6 +32,7 @@ export default function FormDrawer({
     onOpenChange: (open: boolean) => void;
     item?: any | null;
 }) {
+    const [selectOpen, setSelectOpen] = useState(false);
     const foreignKey = `${module.filter_name}_id`;
 
     const {
@@ -151,37 +146,50 @@ export default function FormDrawer({
                                     )}
 
                                     {isDatabaseSelect || isManualSelect ? (
-                                        <Select
-                                            value={data[currentKey]?.toString()}
-                                            onValueChange={(val) =>
+                                        <ComboboxField
+                                            field={field}
+                                            currentKey={currentKey}
+                                            currentValue={data[
+                                                currentKey
+                                            ]?.toString()}
+                                            onSelect={(val) =>
                                                 handleValueChange(
                                                     currentKey,
                                                     val,
                                                 )
                                             }
-                                        >
-                                            <SelectTrigger
-                                                id={field.key}
-                                                className="w-full"
-                                            >
-                                                <SelectValue
-                                                    placeholder={`Select ${field.name}`}
-                                                />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {field.options?.map(
-                                                    (opt: any) => (
-                                                        <SelectItem
-                                                            key={opt.id}
-                                                            value={opt.id.toString()}
-                                                        >
-                                                            {opt.name}
-                                                        </SelectItem>
-                                                    ),
-                                                )}
-                                            </SelectContent>
-                                        </Select>
-                                    ) : field.input_type === 'tinymce' ? (
+                                        />
+                                    ) : // <Select
+                                    //     value={data[currentKey]?.toString()}
+                                    //     onValueChange={(val) =>
+                                    //         handleValueChange(
+                                    //             currentKey,
+                                    //             val,
+                                    //         )
+                                    //     }
+                                    // >
+                                    //     <SelectTrigger
+                                    //         id={field.key}
+                                    //         className="w-full"
+                                    //     >
+                                    //         <SelectValue
+                                    //             placeholder={`Select ${field.name}`}
+                                    //         />
+                                    //     </SelectTrigger>
+                                    //     <SelectContent>
+                                    //         {field.options?.map(
+                                    //             (opt: any) => (
+                                    //                 <SelectItem
+                                    //                     key={opt.id}
+                                    //                     value={opt.id.toString()}
+                                    //                 >
+                                    //                     {opt.name}
+                                    //                 </SelectItem>
+                                    //             ),
+                                    //         )}
+                                    //     </SelectContent>
+                                    // </Select>
+                                    field.input_type === 'tinymce' ? (
                                         <div className="overflow-hidden rounded-md border bg-background">
                                             <Editor
                                                 onFocusIn={(e) => {

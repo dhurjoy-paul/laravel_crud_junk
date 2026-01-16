@@ -16,7 +16,6 @@ class Student extends Model
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
         'max_borrow_limit' => 'integer',
     ];
 

@@ -31,14 +31,12 @@ export default function Students({
                 key: 'name',
                 input_type: 'text',
                 form_sn: 1,
-                sort: true,
             },
             {
                 name: 'Email Address',
                 key: 'email',
                 input_type: 'email',
                 form_sn: 2,
-                sort: true,
             },
             {
                 name: 'Student Card ID',
@@ -52,7 +50,6 @@ export default function Students({
                 key: 'max_borrow_limit',
                 input_type: 'number',
                 form_sn: 4,
-                form_hide: true,
                 sort: true,
             },
             {
@@ -61,8 +58,8 @@ export default function Students({
                 input_type: 'manualSelect',
                 custom_style: 'badge',
                 options: [
-                    { id: true, name: 'Active' },
-                    { id: false, name: 'Inactive' },
+                    { id: 'Active', name: 'Active' },
+                    { id: 'Inactive', name: 'Inactive' },
                 ],
                 form_sn: 5,
             },

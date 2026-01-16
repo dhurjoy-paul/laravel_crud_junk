@@ -23,7 +23,7 @@ class StudentController extends BaseResourceController
             'email'            => ['required', 'email', Rule::unique('students', 'email')->ignore($id)],
             'student_card_id'  => ['nullable', 'string', Rule::unique('students', 'student_card_id')->ignore($id)],
             'image'          => $id ? ['nullable', 'image', 'mimes:jpeg,png,jpg,svg', 'max:2048'] : ['required', 'image', 'mimes:jpeg,png,jpg,svg', 'max:2048'],
-            'is_active'        => ['boolean'],
+            'is_active'        => ['required', 'string'],
             'max_borrow_limit' => ['required', 'integer', 'min:1'],
         ];
     }

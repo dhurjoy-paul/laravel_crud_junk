@@ -31,14 +31,12 @@ export default function Books({
                 key: 'title',
                 input_type: 'text',
                 form_sn: 1,
-                sort: true,
             },
             {
                 name: 'Author',
                 key: 'author',
                 input_type: 'text',
                 form_sn: 2,
-                sort: true,
             },
             {
                 name: 'ISBN',

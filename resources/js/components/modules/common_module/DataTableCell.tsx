@@ -21,13 +21,13 @@ export function DataTableCell({ field, row }: DataTableCellProps) {
         return (
             <div className="flex justify-center opacity-90">
                 {Number(value) === 1 || value === true ? (
-                    <Badge className="gap-1 bg-green-50 dark:bg-green-700 border-green-400 rounded-full text-green-900 dark:text-green-50">
+                    <Badge className="gap-1 rounded-full border-green-400 bg-green-50 text-green-900 dark:bg-green-700 dark:text-green-50">
                         <Check size={12} strokeWidth={5} />
                     </Badge>
                 ) : (
                     <Badge
                         variant="outline"
-                        className="gap-1 bg-red-50 dark:bg-red-700 border-red-400 rounded-full text-red-900 dark:text-red-50"
+                        className="gap-1 rounded-full border-red-400 bg-red-50 text-red-900 dark:bg-red-700 dark:text-red-50"
                     >
                         <X size={12} strokeWidth={5} />
                     </Badge>
@@ -37,15 +37,19 @@ export function DataTableCell({ field, row }: DataTableCellProps) {
     }
 
     // single image
-    if (field.key === 'image_url' || field.key === 'image') {
+    if (
+        field.key === 'image_url' ||
+        field.key === 'image' ||
+        field.input_type === 'file'
+    ) {
         return value ? (
             <img
                 src={`/storage/${value}`}
-                className="mx-auto rounded size-10 object-cover"
+                className="mx-auto size-10 rounded object-cover"
                 alt="thumbnail"
             />
         ) : (
-            <span className="text-muted-foreground text-xs">No Image</span>
+            <span className="text-xs text-muted-foreground">No Image</span>
         );
     }
 
@@ -76,6 +80,44 @@ export function DataTableCell({ field, row }: DataTableCellProps) {
                 {value}
             </Badge>
         );
+    }
+
+    // date and datetime formatting
+    if (
+        field.input_type === 'date' ||
+        field.input_type === 'datetime-local' ||
+        field.key.includes('date') ||
+        field.key.includes('_at')
+    ) {
+        if (!value) return <span className="text-muted-foreground">-</span>;
+
+        try {
+            const dateObj = new Date(value);
+
+            if (isNaN(dateObj.getTime())) return <span>{value}</span>;
+
+            if (field.input_type === 'date') {
+                return (
+                    <span className={field.css_style}>
+                        {dateObj.toISOString().split('T')[0]}
+                    </span>
+                );
+            }
+
+            return (
+                <span className={`whitespace-nowrap ${field.css_style || ''}`}>
+                    {new Intl.DateTimeFormat('en-GB', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                    }).format(dateObj)}
+                </span>
+            );
+        } catch (e) {
+            return <span>{value}</span>;
+        }
     }
 
     // default

@@ -15,7 +15,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { useForm } from '@inertiajs/react';
 import { Editor } from '@tinymce/tinymce-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import ComboboxField from './ComboboxField';
 import { ModuleConfig } from './types';
 
@@ -32,7 +32,6 @@ export default function FormDrawer({
     onOpenChange: (open: boolean) => void;
     item?: any | null;
 }) {
-    const [selectOpen, setSelectOpen] = useState(false);
     const foreignKey = `${module.filter_name}_id`;
 
     const {
@@ -61,10 +60,24 @@ export default function FormDrawer({
             if (item) {
                 const editData: any = { _method: 'PUT' };
                 module.fields.forEach((field) => {
+                    const rawValue = item[field.key];
+
                     if (field.input_type === 'file') {
                         editData[field.key] = null;
+                    } else if (field.input_type === 'date' && rawValue) {
+                        editData[field.key] = rawValue.split('T')[0];
+                    } else if (
+                        field.input_type === 'datetime-local' &&
+                        rawValue
+                    ) {
+                        const date = new Date(rawValue);
+                        const offset = date.getTimezoneOffset() * 60000;
+                        const localISOTime = new Date(date.getTime() - offset)
+                            .toISOString()
+                            .slice(0, 16);
+                        editData[field.key] = localISOTime;
                     } else {
-                        editData[field.key] = item[field.key] ?? '';
+                        editData[field.key] = rawValue ?? '';
                     }
                 });
                 editData[foreignKey] = item[foreignKey]?.toString() ?? '';
@@ -159,37 +172,7 @@ export default function FormDrawer({
                                                 )
                                             }
                                         />
-                                    ) : // <Select
-                                    //     value={data[currentKey]?.toString()}
-                                    //     onValueChange={(val) =>
-                                    //         handleValueChange(
-                                    //             currentKey,
-                                    //             val,
-                                    //         )
-                                    //     }
-                                    // >
-                                    //     <SelectTrigger
-                                    //         id={field.key}
-                                    //         className="w-full"
-                                    //     >
-                                    //         <SelectValue
-                                    //             placeholder={`Select ${field.name}`}
-                                    //         />
-                                    //     </SelectTrigger>
-                                    //     <SelectContent>
-                                    //         {field.options?.map(
-                                    //             (opt: any) => (
-                                    //                 <SelectItem
-                                    //                     key={opt.id}
-                                    //                     value={opt.id.toString()}
-                                    //                 >
-                                    //                     {opt.name}
-                                    //                 </SelectItem>
-                                    //             ),
-                                    //         )}
-                                    //     </SelectContent>
-                                    // </Select>
-                                    field.input_type === 'tinymce' ? (
+                                    ) : field.input_type === 'tinymce' ? (
                                         <div className="overflow-hidden rounded-md border bg-background">
                                             <Editor
                                                 onFocusIn={(e) => {
@@ -261,12 +244,18 @@ export default function FormDrawer({
                                         <Input
                                             id={field.key}
                                             type={field.input_type}
-                                            value={data[field.key] || ''}
+                                            value={data[field.key] ?? ''}
                                             onChange={(e) =>
                                                 handleValueChange(
                                                     field.key,
                                                     e.target.value,
                                                 )
+                                            }
+                                            step={
+                                                field.input_type ===
+                                                'datetime-local'
+                                                    ? '1'
+                                                    : undefined
                                             }
                                             required
                                         />

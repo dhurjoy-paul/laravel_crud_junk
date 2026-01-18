@@ -18,8 +18,8 @@ export function ActiveFilters({
                 Active Filters:
             </span>
 
-            {hasActiveFilters && (
-                <div className="no-scrollbar flex flex-1 items-center gap-2 overflow-x-auto pb-1">
+            {hasActiveFilters ? (
+                <div className="no-scrollbar flex flex-1 items-center gap-2 overflow-x-auto">
                     {activeEntries.map(([key, value]) => {
                         const field = fields.find((f: any) => f.key === key);
                         return (
@@ -30,7 +30,7 @@ export function ActiveFilters({
                                 <span className="text-[10px] font-bold text-primary/70 uppercase">
                                     {field?.name}:
                                 </span>
-                                <div className="flex gap-1">
+                                <div className="flex items-center gap-1">
                                     {String(value)
                                         .split(',')
                                         .map((v) => (
@@ -63,6 +63,10 @@ export function ActiveFilters({
                         );
                     })}
                 </div>
+            ) : (
+                <span className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[10px] font-bold text-primary/70 uppercase">
+                    None
+                </span>
             )}
         </div>
     );

@@ -30,6 +30,7 @@ type OtherTypes =
     | 'email'
     | 'number'
     | 'date'
+    | 'datetime-local'
     | 'tel';
 
 interface SortableField extends BaseField {

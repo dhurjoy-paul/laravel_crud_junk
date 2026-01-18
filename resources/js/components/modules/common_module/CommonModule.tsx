@@ -60,7 +60,7 @@ export default function CommonModule({
                 {/* reusable table component */}
                 <DataTable
                     module={module}
-                    allData={allItems}
+                    allData={data}
                     onEdit={handleEditClick}
                     filters={filters}
                 />

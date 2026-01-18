@@ -40,7 +40,6 @@ export default function DataTable({
 }) {
     const [selectedIds, setSelectedIds] = useState<(string | number)[]>([]);
     const { fields } = module || {};
-    const rows = allData?.data || [];
     const showActions = module.actions ?? true;
 
     const { columnSettings, visibleFields, toggleColumn, moveColumn } =
@@ -48,7 +47,7 @@ export default function DataTable({
     const { hasActiveFilters, clearFilters } = useFilters(fields, filters);
 
     const toggleSelectAll = () => {
-        const currentPageIds = rows.map((r: any) => r.id);
+        const currentPageIds = allData.map((r: any) => r.id);
         const allSelected = currentPageIds.every((id: any) =>
             selectedIds.includes(id),
         );
@@ -208,8 +207,8 @@ export default function DataTable({
                                 <TableHead className="w-[50px] text-center">
                                     <Checkbox
                                         checked={
-                                            rows.length > 0 &&
-                                            rows.every((r: any) =>
+                                            allData.length > 0 &&
+                                            allData.every((r: any) =>
                                                 selectedIds.includes(r.id),
                                             )
                                         }
@@ -288,8 +287,8 @@ export default function DataTable({
                     </TableHeader>
 
                     <TableBody>
-                        {rows.length > 0 ? (
-                            rows.map((row: any) => (
+                        {allData.length > 0 ? (
+                            allData.map((row: any) => (
                                 <TableRow
                                     key={row.id}
                                     className={`transition-colors ${selectedIds.includes(row.id) ? 'bg-muted/50' : 'hover:bg-muted/30'}`}

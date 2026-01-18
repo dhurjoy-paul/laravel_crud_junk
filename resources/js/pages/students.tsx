@@ -73,7 +73,7 @@ export default function Students({
             {
                 name: 'Created At',
                 key: 'created_at',
-                input_type: 'date',
+                input_type: 'datetime-local',
                 form_hide: true,
                 sort: true,
             },

@@ -18,7 +18,14 @@ import posts from '@/routes/posts';
 import students from '@/routes/students';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpenText, Headset, LayoutGrid, Notebook } from 'lucide-react';
+import {
+    BookOpenText,
+    FileText,
+    GraduationCap,
+    Headset,
+    LayoutGrid,
+    LibraryBig,
+} from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -30,17 +37,17 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Students',
         href: students.index(),
-        icon: Notebook,
+        icon: GraduationCap,
     },
     {
         title: 'Books',
         href: books.index(),
-        icon: Notebook,
+        icon: BookOpenText,
     },
     {
         title: 'Book Loan',
         href: bookloans.index(),
-        icon: Notebook,
+        icon: LibraryBig,
     },
 ];
 
@@ -53,7 +60,7 @@ const footerNavItems: NavItem[] = [
     {
         title: 'Posts',
         href: posts.index(),
-        icon: BookOpenText,
+        icon: FileText,
     },
     // {
     //     title: 'Repository',

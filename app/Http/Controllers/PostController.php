@@ -14,6 +14,7 @@ class PostController extends BaseResourceController
 
     protected $isUserId = true;
     protected $slugColumn = 'title';
+    protected $extraData = ['categories' => Category::class];
 
     protected $filterKey = 'category_id';
     protected $filterName = 'category';

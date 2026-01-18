@@ -20,18 +20,17 @@ abstract class BaseResourceController extends Controller
   protected $slugColumn = null;     // which column will create the slug? 'title', 'name', 'product_name'
   protected $fileColumn = 'image';  // image column name, default to image
 
-  // these needed if wanna send any database table data to react 
-  protected $relationModel = null;  // (optional) Category::class, Genre::class
-  protected $relationName = null;   // (optional) 'categories', 'genres' (for the frontend prop)
-
   // for eager loading relationships in the table
   protected $load = [];             // ['student', 'book']
   // for multiple dropdowns/lists in the frontend ['props name' => desired model]
   protected $extraData = [];        // ['students' => Student::class, 'books' => Book::class]
 
-  // no need of filterKey and filterName anymore
+  // need to remove, using at store and update now
   protected $filterKey = null;
   protected $filterName = null;
+
+  protected $relationModel = null;  // (optional) Category::class, Genre::class
+  protected $relationName = null;   // (optional) 'categories', 'genres' (for the frontend prop)
 
   /**
    * Display a listing of the resource.
@@ -95,7 +94,7 @@ abstract class BaseResourceController extends Controller
       }
     }
 
-    // cant remove relationName, relationModel right
+    // cant remove relationName, relationModel right now
     // if ($this->relationName && $this->relationModel) {
     //   $inertiaData[$this->relationName] = $this->relationModel::all();
     // }

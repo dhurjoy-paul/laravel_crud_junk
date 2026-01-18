@@ -11,26 +11,51 @@ use Inertia\Inertia;
 
 abstract class BaseResourceController extends Controller
 {
-  protected $model;                 // Post::class
-  protected $viewName;              // 'posts'
-  protected $folderName;            // 'posts' (for storage)
-  protected $searchable = [];       // ['title', 'content', 'isbn']
+  /**
+   * ========================================================================
+   * PREREQUISITES FOR CHILD CONTROLLERS
+   * ========================================================================
+   * 1. MODEL: Define the main model class.
+   * 2. VIEW & FOLDER: Define view name (Inertia) and storage folder.
+   * 3. EXTRA DATA: Map plural relation keys to Model classes (e.g. 'students' => Student::class).
+   * ---- This is required for search fallbacks and dropdown data.
+   * 4. SEARCHABLE: Use dot notation for relations (e.g. 'students.name').
+   * ---- Logic first checks for a relationship method (singular: student()).
+   * ---- If missing, it joins via extraData key assuming a 'student_id' column.
+   * 5. SYNCING: If table has a '*_name' column (e.g. 'student_name'), 
+   * it is automatically populated from the related model's 'name' or 'title'.
+   * ========================================================================
+   */
 
-  protected $isUserId = false;      // boolean, if database table need/has user_id column
-  protected $slugColumn = null;     // which column will create the slug? 'title', 'name', 'product_name'
-  protected $fileColumn = 'image';  // image column name, default to image
+  protected $model;                 // Example: Post::class
+  protected $viewName;              // Example: 'posts' (Inertia render path)
+  protected $folderName;            // Example: 'posts' (Folder name for file uploads)
 
-  // for eager loading relationships in the table
-  protected $load = [];             // ['student', 'book']
-  // for multiple dropdowns/lists in the frontend ['props name' => desired model]
-  protected $extraData = [];        // ['students' => Student::class, 'books' => Book::class]
+  /**
+   * Columns allowed for global search.
+   * Local: ['title', 'isbn']
+   * Relation: ['students.name'] -> Searches 'name' on the 'students' table.
+   */
+  protected $searchable = [];
 
-  // need to remove, using at store and update now
-  protected $filterKey = null;
-  protected $filterName = null;
+  protected $isUserId = false;      // Set true if table has 'user_id' for ownership checks
+  protected $slugColumn = null;     // Column to generate slug from (e.g. 'title')
+  protected $fileColumn = 'image';  // Column name for file/image uploads
 
-  protected $relationModel = null;  // (optional) Category::class, Genre::class
-  protected $relationName = null;   // (optional) 'categories', 'genres' (for the frontend prop)
+  /**
+   * Eager load relationships for the index table.
+   * Must correspond to Eloquent relationship methods in the Model.
+   */
+  protected $load = [];             // Example: ['student', 'book']
+
+  /**
+   * Map plural keys to Model classes.
+   * Used for: 
+   * a) Sending dropdown/list data to the frontend Inertia props.
+   * b) Manual join searching if Eloquent relations aren't defined.
+   * c) Auto-syncing '*_name' columns in store/update.
+   */
+  protected $extraData = [];        // Example: ['students' => Student::class]
 
   /**
    * Display a listing of the resource.
@@ -51,10 +76,27 @@ abstract class BaseResourceController extends Controller
       $q->where(function ($subQuery) use ($search) {
         foreach ($this->searchable as $column) {
           if (str_contains($column, '.')) {
-            [$relation, $relCol] = explode('.', $column);
-            $subQuery->orWhereHas($relation, function ($rq) use ($relCol, $search) {
-              $rq->where($relCol, 'like', "%{$search}%");
-            });
+            [$relationKey, $relCol] = explode('.', $column);
+
+            $relationMethod = Str::singular($relationKey);
+
+            if (method_exists($this->model, $relationMethod)) {
+              $subQuery->orWhereHas($relationMethod, function ($rq) use ($relCol, $search) {
+                $rq->where($relCol, 'like', "%{$search}%");
+              });
+            } elseif (isset($this->extraData[$relationKey])) {
+              $relatedModel = new $this->extraData[$relationKey];
+              $relatedTable = $relatedModel->getTable();
+              // example: 'student_id'
+              $foreignKey = $relationMethod . '_id';
+
+              $subQuery->orWhereIn('id', function ($inner) use ($relatedTable, $relCol, $search, $foreignKey) {
+                $inner->select($this->model->getTable() . '.id')
+                  ->from($this->model->getTable())
+                  ->join($relatedTable, $this->model->getTable() . '.' . $foreignKey, '=', $relatedTable . '.id')
+                  ->where($relatedTable . '.' . $relCol, 'like', "%{$search}%");
+              });
+            }
           } else {
             $subQuery->orWhere($column, 'like', "%{$search}%");
           }
@@ -94,11 +136,6 @@ abstract class BaseResourceController extends Controller
       }
     }
 
-    // cant remove relationName, relationModel right now
-    // if ($this->relationName && $this->relationModel) {
-    //   $inertiaData[$this->relationName] = $this->relationModel::all();
-    // }
-
     return Inertia::render($this->viewName, $inertiaData);
   }
 
@@ -122,20 +159,22 @@ abstract class BaseResourceController extends Controller
       $data['slug'] = Str::slug($data[$this->slugColumn]) . '-' . Str::random(5);
     }
 
-    if ($this->filterKey && $this->relationModel) {
-      $columnName = str_replace('_id', '_name', $this->filterKey);
+    // if ($this->filterKey && $this->relationModel) {
+    //   $columnName = str_replace('_id', '_name', $this->filterKey);
 
-      if (Schema::hasColumn((new $this->model)->getTable(), $columnName)) {
-        $relationId = $data[$this->filterKey] ?? null;
+    //   if (Schema::hasColumn((new $this->model)->getTable(), $columnName)) {
+    //     $relationId = $data[$this->filterKey] ?? null;
 
-        if ($relationId) {
-          $relation = $this->relationModel::find($relationId);
-          $data[$columnName] = $relation ? $relation->name : null;
-        } else {
-          $data[$columnName] = null;
-        }
-      }
-    }
+    //     if ($relationId) {
+    //       $relation = $this->relationModel::find($relationId);
+    //       $data[$columnName] = $relation ? $relation->name : null;
+    //     } else {
+    //       $data[$columnName] = null;
+    //     }
+    //   }
+    // }
+
+    $data = $this->syncRelationNames($data);
 
     $this->model::create($data);
 
@@ -165,24 +204,11 @@ abstract class BaseResourceController extends Controller
       unset($data[$fileColumn]);
     }
 
-    if ($this->filterKey && $this->relationModel) {
-      $columnName = str_replace('_id', '_name', $this->filterKey);
-
-      if (Schema::hasColumn((new $this->model)->getTable(), $columnName)) {
-        $relationId = $data[$this->filterKey] ?? null;
-
-        if ($relationId) {
-          $relation = $this->relationModel::find($relationId);
-          $data[$columnName] = $relation ? $relation->name : null;
-        } else {
-          $data[$columnName] = null;
-        }
-      }
-    }
-
     if ($this->slugColumn) {
       $data['slug'] = Str::slug($data[$this->slugColumn]) . '-' . Str::random(5);
     }
+
+    $data = $this->syncRelationNames($data);
 
     $item->update($data);
 
@@ -197,7 +223,7 @@ abstract class BaseResourceController extends Controller
     $item = $this->model::findOrFail($id);
     if (isset($item->user_id) && $item->user_id !== Auth::id()) abort(403);
 
-    if ($item->image) Storage::disk('public')->delete($item->image);
+    if ($item->{$this->fileColumn}) Storage::disk('public')->delete($item->{$this->fileColumn});
     $item->delete();
 
     return redirect()->back()->with('message', 'Deleted successfully');
@@ -213,11 +239,38 @@ abstract class BaseResourceController extends Controller
 
     foreach ($items as $item) {
       if (isset($item->user_id) && $item->user_id !== Auth::id()) continue;
-      if ($item->image) Storage::disk('public')->delete($item->image);
+      if ($item->{$this->fileColumn}) Storage::disk('public')->delete($item->{$this->fileColumn});
       $item->delete();
     }
 
     return redirect()->back()->with('message', 'Items deleted successfully');
+  }
+
+  /**
+   * synchronizes '_name' columns based on '_id' fields using extraData.
+   */
+  protected function syncRelationNames(array $data): array
+  {
+    foreach ($data as $key => $value) {
+      if (str_ends_with($key, '_id')) {
+        $columnName = str_replace('_id', '_name', $key);
+
+        if (Schema::hasColumn((new $this->model)->getTable(), $columnName)) {
+          // example: student_id -> students
+          $relationKey = Str::plural(str_replace('_id', '', $key));
+          $modelClass = $this->extraData[$relationKey] ?? null;
+
+          if ($modelClass && $value) {
+            $relation = $modelClass::find($value);
+            $data[$columnName] = $relation ? ($relation->name ?? $relation->title) : null;
+          } else {
+            $data[$columnName] = null;
+          }
+        }
+      }
+    }
+
+    return $data;
   }
 
   abstract protected function getValidationRules($id = null);

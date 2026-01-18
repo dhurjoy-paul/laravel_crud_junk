@@ -16,11 +16,6 @@ class PostController extends BaseResourceController
     protected $slugColumn = 'title';
     protected $extraData = ['categories' => Category::class];
 
-    protected $filterKey = 'category_id';
-    protected $filterName = 'category';
-    protected $relationModel = Category::class;
-    protected $relationName = 'categories';
-
     protected function getValidationRules($id = null)
     {
         return [

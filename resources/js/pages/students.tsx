@@ -71,7 +71,7 @@ export default function Students({
                 table_hide: true,
             },
             {
-                name: 'Created At',
+                name: 'Added At', // coming from created at
                 key: 'created_at',
                 input_type: 'datetime-local',
                 form_hide: true,

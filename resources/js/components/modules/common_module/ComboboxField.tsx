@@ -18,17 +18,24 @@ import { useState } from 'react';
 
 export default function ComboboxField({
     field,
-    currentKey,
     currentValue,
     onSelect,
 }: {
     field: any;
-    currentKey: string;
     currentValue: string;
     onSelect: (val: string) => void;
 }) {
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState('');
+
+    const getLabel = (opt: any) => {
+        if (!opt) return '';
+        return opt[field.option_value] || '';
+    };
+
+    const selectedOption = field.options?.find(
+        (opt: any) => opt.id.toString() === currentValue?.toString(),
+    );
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -39,11 +46,11 @@ export default function ComboboxField({
                     aria-expanded={open}
                     className="w-full justify-between font-normal"
                 >
-                    {currentValue
-                        ? field.options?.find(
-                              (opt: any) => opt.id.toString() === currentValue,
-                          )?.name
-                        : `Select ${field.name}...`}
+                    <span className="truncate">
+                        {selectedOption
+                            ? getLabel(selectedOption)
+                            : `Select ${field.name}...`}
+                    </span>
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
@@ -73,26 +80,32 @@ export default function ComboboxField({
                     <CommandList>
                         <CommandEmpty>No {field.name} found.</CommandEmpty>
                         <CommandGroup>
-                            {field.options?.map((opt: any) => (
-                                <CommandItem
-                                    key={opt.id}
-                                    value={opt.name} // This is what Command filters on
-                                    onSelect={() => {
-                                        onSelect(opt.id.toString());
-                                        setOpen(false);
-                                    }}
-                                >
-                                    <Check
-                                        className={cn(
-                                            'mr-2 h-4 w-4',
-                                            currentValue === opt.id.toString()
-                                                ? 'opacity-100'
-                                                : 'opacity-0',
-                                        )}
-                                    />
-                                    {opt.name}
-                                </CommandItem>
-                            ))}
+                            {field.options?.map((opt: any) => {
+                                const label = getLabel(opt);
+                                const id = opt.id.toString();
+
+                                return (
+                                    <CommandItem
+                                        key={id}
+                                        value={label}
+                                        onSelect={() => {
+                                            onSelect(id);
+                                            setOpen(false);
+                                            setSearch('');
+                                        }}
+                                    >
+                                        <Check
+                                            className={cn(
+                                                'mr-2 h-4 w-4',
+                                                currentValue?.toString() === id
+                                                    ? 'opacity-100'
+                                                    : 'opacity-0',
+                                            )}
+                                        />
+                                        {label}
+                                    </CommandItem>
+                                );
+                            })}
                         </CommandGroup>
                     </CommandList>
                 </Command>

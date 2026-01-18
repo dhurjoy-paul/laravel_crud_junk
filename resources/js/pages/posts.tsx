@@ -40,10 +40,12 @@ export default function Posts({
             },
             {
                 name: 'Category',
-                key: 'category_name',
+                key: 'category_id',
+                show_key: 'category_name',
                 input_type: 'select',
                 custom_style: 'badge',
                 options: categories,
+                option_value: 'name',
                 form_sn: 2,
             },
             {
@@ -69,7 +71,6 @@ export default function Posts({
                 <CommonModule
                     module={PostModule}
                     filters={filters}
-                    categories={categories}
                     items={allPosts}
                 />
             </div>

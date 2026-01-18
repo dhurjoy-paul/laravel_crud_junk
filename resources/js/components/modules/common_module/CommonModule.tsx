@@ -10,12 +10,12 @@ import { ModuleConfig, PaginatedData } from './types';
 
 export default function CommonModule({
     module,
-    categories,
+    // categories,
     items: allItems,
     filters,
 }: {
     module: ModuleConfig;
-    categories?: any[];
+    // categories?: any[];
     items: PaginatedData<any>;
     filters?: any;
 }) {

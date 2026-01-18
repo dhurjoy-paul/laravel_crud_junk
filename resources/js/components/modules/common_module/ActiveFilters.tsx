@@ -6,7 +6,7 @@ export function ActiveFilters({
     fields,
     filters,
 }: {
-    fields: any;
+    fields: any[];
     filters: any;
 }) {
     const { activeEntries, hasActiveFilters, handleRemoveIndividual } =
@@ -33,31 +33,67 @@ export function ActiveFilters({
                                 <div className="flex items-center gap-1">
                                     {String(value)
                                         .split(',')
-                                        .map((v) => (
-                                            <Badge
-                                                key={`${key}-${v}`}
-                                                variant="secondary"
-                                                onClick={() =>
-                                                    handleRemoveIndividual(
-                                                        key,
-                                                        v,
-                                                    )
+                                        .map((val) => {
+                                            let displayLabel = val;
+
+                                            if (
+                                                field?.options &&
+                                                Array.isArray(field.options)
+                                            ) {
+                                                const option =
+                                                    field.options.find(
+                                                        (opt: any) => {
+                                                            const optId =
+                                                                String(
+                                                                    opt.id ||
+                                                                        opt.value ||
+                                                                        '',
+                                                                );
+                                                            return (
+                                                                optId ===
+                                                                String(val)
+                                                            );
+                                                        },
+                                                    );
+
+                                                if (option) {
+                                                    displayLabel =
+                                                        option[
+                                                            field.show_key
+                                                        ] ||
+                                                        option.name ||
+                                                        option.title ||
+                                                        val;
                                                 }
-                                                className="group flex cursor-pointer items-center gap-1 border-none bg-background px-2 py-0 text-[11px] font-medium shadow-sm"
-                                            >
-                                                {v}
-                                                <X
-                                                    size={10}
-                                                    className="cursor-pointer opacity-50 transition-opacity hover:opacity-100"
+                                            }
+
+                                            return (
+                                                <Badge
+                                                    key={`${key}-${val}`}
+                                                    variant="secondary"
                                                     onClick={() =>
                                                         handleRemoveIndividual(
                                                             key,
-                                                            v,
+                                                            val,
                                                         )
                                                     }
-                                                />
-                                            </Badge>
-                                        ))}
+                                                    className="group flex cursor-pointer items-center gap-1 border-none bg-background px-2 py-0 text-[11px] font-medium shadow-sm"
+                                                >
+                                                    {displayLabel}
+                                                    <X
+                                                        size={10}
+                                                        className="cursor-pointer opacity-50 transition-opacity hover:opacity-100"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleRemoveIndividual(
+                                                                key,
+                                                                val,
+                                                            );
+                                                        }}
+                                                    />
+                                                </Badge>
+                                            );
+                                        })}
                                 </div>
                             </div>
                         );

@@ -8,7 +8,9 @@ class BookLoan extends Model
 {
     protected $fillable = [
         'student_id',
+        'student_name',
         'book_id',
+        'book_title',
         'loan_date',
         'due_date',
         'returned_date',

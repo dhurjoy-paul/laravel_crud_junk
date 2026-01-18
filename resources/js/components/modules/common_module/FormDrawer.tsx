@@ -32,8 +32,6 @@ export default function FormDrawer({
     onOpenChange: (open: boolean) => void;
     item?: any | null;
 }) {
-    const foreignKey = `${module.filter_name}_id`;
-
     const {
         data,
         setData,
@@ -45,20 +43,22 @@ export default function FormDrawer({
     } = useForm<Record<string, any>>({
         ...module.fields.reduce(
             (acc, field) => {
-                acc[field.key] = '';
                 acc[field.key] = field.input_type === 'checkbox' ? 0 : '';
                 return acc;
             },
             {} as Record<string, any>,
         ),
-        [foreignKey]: '',
         _method: 'POST',
     });
 
     useEffect(() => {
         if (open) {
             if (item) {
-                const editData: any = { _method: 'PUT' };
+                const editData: any = {
+                    _method: 'PUT',
+                    id: item.id,
+                };
+
                 module.fields.forEach((field) => {
                     const rawValue = item[field.key];
 
@@ -72,15 +72,13 @@ export default function FormDrawer({
                     ) {
                         const date = new Date(rawValue);
                         const offset = date.getTimezoneOffset() * 60000;
-                        const localISOTime = new Date(date.getTime() - offset)
+                        editData[field.key] = new Date(date.getTime() - offset)
                             .toISOString()
                             .slice(0, 16);
-                        editData[field.key] = localISOTime;
                     } else {
-                        editData[field.key] = rawValue ?? '';
+                        editData[field.key] = rawValue?.toString() ?? '';
                     }
                 });
-                editData[foreignKey] = item[foreignKey]?.toString() ?? '';
                 setData(editData);
             } else {
                 reset();
@@ -138,15 +136,6 @@ export default function FormDrawer({
                         className="space-y-5 pb-24"
                     >
                         {formFields.map((field) => {
-                            const isDatabaseSelect =
-                                field.input_type === 'select';
-                            const isManualSelect =
-                                field.input_type === 'manualSelect';
-
-                            const currentKey = isDatabaseSelect
-                                ? foreignKey
-                                : field.key;
-
                             return (
                                 <div key={field.key} className="space-y-2">
                                     {field.input_type === 'checkbox' ? null : (
@@ -158,16 +147,16 @@ export default function FormDrawer({
                                         </Label>
                                     )}
 
-                                    {isDatabaseSelect || isManualSelect ? (
+                                    {field.input_type === 'select' ? (
                                         <ComboboxField
                                             field={field}
-                                            currentKey={currentKey}
+                                            currentKey={field.key}
                                             currentValue={data[
-                                                currentKey
+                                                field.key
                                             ]?.toString()}
                                             onSelect={(val) =>
                                                 handleValueChange(
-                                                    currentKey,
+                                                    field.key,
                                                     val,
                                                 )
                                             }
@@ -260,7 +249,7 @@ export default function FormDrawer({
                                             required
                                         />
                                     )}
-                                    <InputError message={errors[currentKey]} />
+                                    <InputError message={errors[field.key]} />
                                 </div>
                             );
                         })}

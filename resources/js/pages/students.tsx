@@ -55,12 +55,13 @@ export default function Students({
             {
                 name: 'Account Status',
                 key: 'is_active',
-                input_type: 'manualSelect',
+                input_type: 'select',
                 custom_style: 'badge',
                 options: [
                     { id: 'Active', name: 'Active' },
                     { id: 'Inactive', name: 'Inactive' },
                 ],
+                option_value: 'name',
                 form_sn: 5,
             },
             {

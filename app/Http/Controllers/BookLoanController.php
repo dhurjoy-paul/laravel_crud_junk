@@ -11,7 +11,7 @@ class BookLoanController extends BaseResourceController
     protected $model = BookLoan::class;
     protected $viewName = 'bookLoans';
     protected $folderName = 'book-loans';
-    protected $searchable = ['student.name', 'book.title', 'loan_date', 'due_date'];
+    protected $searchable = ['students.name', 'books.title', 'loan_date', 'due_date'];
 
     protected $load = ['student', 'book'];
     protected $extraData = [

@@ -225,10 +225,10 @@ export default function DataTable({
                                 return (
                                     <TableHead
                                         key={field.key}
-                                        className={`font-semibold ${index === 0 ? 'text-left' : 'text-center'}`}
+                                        className={`font-semibold ${index === 0 || field.align === 'left' ? 'text-left' : 'text-center'}`}
                                     >
                                         <div
-                                            className={`flex items-center ${index === 0 ? 'justify-start' : 'justify-center'}`}
+                                            className={`flex items-center ${index === 0 || field.align === 'left' ? 'justify-start' : 'justify-center'}`}
                                         >
                                             {field.sort ? (
                                                 <Button
@@ -262,9 +262,7 @@ export default function DataTable({
                                                         />
                                                     )}
                                                 </Button>
-                                            ) : (field.input_type ===
-                                                  'select' ||
-                                                  'manualSelect') &&
+                                            ) : field.input_type === 'select' &&
                                               field.options ? (
                                                 <ReusableFilter
                                                     field={field}
@@ -311,7 +309,8 @@ export default function DataTable({
                                         <TableCell
                                             key={field.key}
                                             className={
-                                                index === 0
+                                                index === 0 ||
+                                                field.align === 'left'
                                                     ? 'text-left'
                                                     : 'text-center'
                                             }

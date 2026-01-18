@@ -12,15 +12,17 @@ export type ModuleField = SortableField | NonSortableField;
 interface BaseField {
     name: string;
     key: string;
+    show_key?: string; // use when value will save as 'key' but need to show another column
     options?: any[];
     css_style?: string;
     custom_style?: 'badge' | 'truncate';
+    align?: 'center' | 'left' | 'right';
     form_sn?: number;
     table_hide?: boolean;
     form_hide?: boolean;
 }
 
-type SelectTypes = 'select' | 'manualSelect';
+type SelectType = 'select';
 type OtherTypes =
     | 'tinymce'
     | 'textarea'
@@ -36,11 +38,13 @@ type OtherTypes =
 interface SortableField extends BaseField {
     input_type: OtherTypes;
     sort?: boolean;
+    option_value?: null;
 }
 
 interface NonSortableField extends BaseField {
-    input_type: SelectTypes;
+    input_type: SelectType;
     sort?: false;
+    option_value: 'name' | 'title' | string;
 }
 
 // each category, each genre

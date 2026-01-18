@@ -31,6 +31,8 @@ export default function Books({
                 key: 'title',
                 input_type: 'text',
                 form_sn: 1,
+                custom_style: 'truncate',
+                align: 'left',
             },
             {
                 name: 'Author',
@@ -48,9 +50,10 @@ export default function Books({
             {
                 name: 'Genre',
                 key: 'genre',
-                input_type: 'manualSelect',
+                input_type: 'select',
                 custom_style: 'badge',
                 options: genreOptions, // coming from this file's bottom not from DB
+                option_value: 'name',
                 form_sn: 3,
             },
             {

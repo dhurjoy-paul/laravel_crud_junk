@@ -16,9 +16,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function BookLoans({
     items: allLoans,
+    students,
+    books,
     filters,
 }: {
     items: PaginatedData<BookLoan>;
+    students: any;
+    books: any;
     filters?: any;
 }) {
     const LoanModule: ModuleConfig = {
@@ -27,23 +31,25 @@ export default function BookLoans({
         model_name: 'BookLoan',
         fields: [
             {
-                name: 'Student ID',
+                name: 'Student Name',
                 key: 'student_id',
-                input_type: 'number',
+                input_type: 'select',
+                options: students,
+                option_value: 'name', // students use 'name'
                 form_sn: 1,
-                sort: true,
             },
             {
-                name: 'Book ID',
+                name: 'Book Title',
                 key: 'book_id',
-                input_type: 'number',
+                input_type: 'select',
+                options: books,
+                option_value: 'title', // books use 'title'
                 form_sn: 2,
-                sort: true,
             },
             {
                 name: 'Loan Date',
                 key: 'loan_date',
-                input_type: 'date',
+                input_type: 'datetime-local',
                 form_sn: 3,
                 sort: true,
             },

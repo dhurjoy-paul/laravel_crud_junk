@@ -125,7 +125,6 @@ export interface ModuleField {
         | 'tinymce' // TinyMCE editor, Can be used instead of textarea
         | 'textarea'
         | 'select' // This select's options will come from another database table
-        | 'manualSelect' // This select's options can be made on frontend
         | 'checkbox' // For boolean values
         | 'file' // now supports single 'image'
         //  | 'files' // coming soon

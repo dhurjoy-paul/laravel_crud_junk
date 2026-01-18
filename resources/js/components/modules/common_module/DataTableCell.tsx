@@ -5,16 +5,19 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 import { Check, X } from 'lucide-react';
 import { ModuleField } from './types';
 
-interface DataTableCellProps {
+export function DataTableCell({
+    field,
+    row,
+}: {
     field: ModuleField;
     row: any;
-}
-
-export function DataTableCell({ field, row }: DataTableCellProps) {
-    const value = row[field.key];
+}) {
+    const displayKey = field.show_key || field.key;
+    const value = row[displayKey];
 
     // checkbox (boolean value)
     if (field.input_type === 'checkbox' || typeof value === 'boolean') {
@@ -38,8 +41,8 @@ export function DataTableCell({ field, row }: DataTableCellProps) {
 
     // single image
     if (
-        field.key === 'image_url' ||
-        field.key === 'image' ||
+        displayKey === 'image_url' ||
+        displayKey === 'image' ||
         field.input_type === 'file'
     ) {
         return value ? (
@@ -60,7 +63,13 @@ export function DataTableCell({ field, row }: DataTableCellProps) {
                 <Tooltip delayDuration={150}>
                     <TooltipTrigger asChild>
                         <span
-                            className={`mx-auto block max-w-[250px] cursor-help truncate ${field.css_style || ''}`}
+                            className={cn(
+                                'block max-w-[250px] cursor-help truncate',
+                                field.css_style,
+                                field.align === 'left'
+                                    ? 'text-left'
+                                    : 'mx-auto',
+                            )}
                         >
                             {value}
                         </span>
@@ -86,8 +95,8 @@ export function DataTableCell({ field, row }: DataTableCellProps) {
     if (
         field.input_type === 'date' ||
         field.input_type === 'datetime-local' ||
-        field.key.includes('date') ||
-        field.key.includes('_at')
+        displayKey.includes('date') ||
+        displayKey.includes('_at')
     ) {
         if (!value) return <span className="text-muted-foreground">-</span>;
 

@@ -46,23 +46,25 @@ export default function Headphones({
             {
                 name: 'Type',
                 key: 'type',
-                input_type: 'manualSelect',
+                input_type: 'select',
                 options: [
                     { id: 'Over-Ear', name: 'Over-Ear' },
                     { id: 'On-Ear', name: 'On-Ear' },
                     { id: 'In-Ear', name: 'In-Ear' },
                 ],
+                option_value: 'name',
                 form_sn: 3,
             },
             {
                 name: 'Connection',
                 key: 'connection_type',
-                input_type: 'manualSelect',
+                input_type: 'select',
                 options: [
                     { id: 'Wired', name: 'Wired' },
                     { id: 'Wireless', name: 'Wireless' },
                     { id: 'Hybrid', name: 'Hybrid' },
                 ],
+                option_value: 'name',
                 form_sn: 4,
             },
             {
@@ -82,13 +84,14 @@ export default function Headphones({
             {
                 name: 'Status',
                 key: 'status',
-                input_type: 'manualSelect',
+                input_type: 'select',
                 custom_style: 'badge',
                 options: [
                     { id: 'In Stock', name: 'In Stock' },
                     { id: 'Out of Stock', name: 'Out of Stock' },
                     { id: 'Pre-order', name: 'Pre-order' },
                 ],
+                option_value: 'name',
                 form_sn: 7,
             },
             {

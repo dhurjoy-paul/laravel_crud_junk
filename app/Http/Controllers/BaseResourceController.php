@@ -247,24 +247,40 @@ abstract class BaseResourceController extends Controller
   }
 
   /**
-   * synchronizes '_name' columns based on '_id' fields using extraData.
+   * Synchronizes denormalized columns (e.g., student_name, book_title) 
+   * based on '_id' fields using extraData mapping.
    */
   protected function syncRelationNames(array $data): array
   {
+    $table = (new $this->model)->getTable();
+
     foreach ($data as $key => $value) {
       if (str_ends_with($key, '_id')) {
-        $columnName = str_replace('_id', '_name', $key);
+        $prefix = str_replace('_id', '', $key);
+        $columns = Schema::getColumnListing($table);
 
-        if (Schema::hasColumn((new $this->model)->getTable(), $columnName)) {
-          // example: student_id -> students
-          $relationKey = Str::plural(str_replace('_id', '', $key));
+        $targetColumn = collect($columns)->first(function ($col) use ($prefix) {
+          return str_starts_with($col, $prefix . '_') && !str_ends_with($col, '_id');
+        });
+
+        if ($targetColumn) {
+          $relationKey = Str::plural($prefix); // student -> students
           $modelClass = $this->extraData[$relationKey] ?? null;
 
           if ($modelClass && $value) {
             $relation = $modelClass::find($value);
-            $data[$columnName] = $relation ? ($relation->name ?? $relation->title) : null;
+
+            if ($relation) {
+              $attributeToPull = str_replace($prefix . '_', '', $targetColumn); // 'title'
+              $data[$targetColumn] = $relation->{$attributeToPull}
+                ?? $relation->name
+                ?? $relation->title
+                ?? null;
+            } else {
+              $data[$targetColumn] = null;
+            }
           } else {
-            $data[$columnName] = null;
+            $data[$targetColumn] = null;
           }
         }
       }

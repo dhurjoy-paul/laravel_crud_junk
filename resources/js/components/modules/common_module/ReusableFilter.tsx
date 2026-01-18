@@ -12,6 +12,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 import { router } from '@inertiajs/react';
 import { Filter, X } from 'lucide-react';
 import { useState } from 'react';
@@ -54,7 +55,12 @@ export function ReusableFilter({
             <PopoverTrigger asChild>
                 <Button
                     variant="ghost"
-                    className={`mx-auto flex w-fit cursor-pointer items-center justify-center gap-2 data-[state=open]:bg-accent ${activeValues.length > 0 ? 'text-foreground' : 'text-foreground/50'}`}
+                    className={cn(
+                        'flex w-fit cursor-pointer items-center justify-center gap-2 data-[state=open]:bg-accent',
+                        activeValues.length > 0
+                            ? 'text-foreground'
+                            : 'text-foreground/50',
+                    )}
                 >
                     <span className="text-foreground">{field.name}</span>
                     <Filter
@@ -108,14 +114,14 @@ export function ReusableFilter({
                         <CommandGroup>
                             {field.options?.map((opt: any) => {
                                 const isSelected = activeValues.includes(
-                                    String(opt.name),
+                                    String(opt.id),
                                 );
                                 return (
                                     <CommandItem
-                                        key={opt.name}
-                                        value={opt.name}
+                                        key={opt[field.option_value]}
+                                        value={opt[field.option_value]}
                                         onSelect={() =>
-                                            toggleFilter(String(opt.name))
+                                            toggleFilter(String(opt.id))
                                         }
                                         className={`group mb-0.5 flex cursor-pointer items-center justify-between rounded-md px-2 py-1.5 text-sm transition-all aria-selected:bg-muted ${
                                             isSelected
@@ -131,7 +137,9 @@ export function ReusableFilter({
                                                         : 'scale-0 bg-transparent group-hover:scale-100 group-hover:bg-muted-foreground/30'
                                                 }`}
                                             />
-                                            <span>{opt.name}</span>
+                                            <span>
+                                                {opt[field.option_value]}
+                                            </span>
                                         </div>
                                         {isSelected && (
                                             <div className="text-[10px] opacity-60">

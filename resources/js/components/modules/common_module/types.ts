@@ -17,12 +17,12 @@ interface BaseField {
     css_style?: string;
     custom_style?: 'badge' | 'truncate';
     align?: 'center' | 'left' | 'right';
+    required?: boolean;
     form_sn?: number;
     table_hide?: boolean;
     form_hide?: boolean;
 }
 
-type SelectType = 'select';
 type OtherTypes =
     | 'tinymce'
     | 'textarea'
@@ -36,13 +36,13 @@ type OtherTypes =
     | 'tel';
 
 interface SortableField extends BaseField {
-    input_type: OtherTypes;
+    input_type?: OtherTypes;
     sort?: boolean;
     option_value?: null;
 }
 
 interface NonSortableField extends BaseField {
-    input_type: SelectType;
+    input_type?: 'select';
     sort?: false;
     option_value: 'name' | 'title' | string;
 }

@@ -5,24 +5,125 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ChevronDown, ChevronUp, Filter, Settings2 } from 'lucide-react';
+import {
+    closestCenter,
+    DndContext,
+    DragEndEvent,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    useSortable,
+    verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { ChevronDown, Filter, GripVertical, Settings2 } from 'lucide-react';
 import { ModuleConfig } from './types';
 
 interface ColumnSettingsDropdownProps {
     columnSettings: { key: string; visible: boolean }[];
     module: ModuleConfig;
     onToggle: (key: string) => void;
-    onMove: (index: number, direction: 'up' | 'down') => void;
+    onReorder: (newOrder: { key: string; visible: boolean }[]) => void;
+}
+
+function SortableColumnItem({
+    setting,
+    field,
+    onToggle,
+}: {
+    setting: any;
+    field: any;
+    onToggle: (key: string) => void;
+}) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id: String(setting.key) });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        zIndex: isDragging ? 50 : 'auto',
+    };
+
+    return (
+        <div
+            ref={setNodeRef}
+            style={style}
+            className={`group flex items-center rounded-md pr-2 transition-colors hover:bg-background ${
+                isDragging ? 'relative z-50 opacity-50 ring-2 ring-primary' : ''
+            }`}
+        >
+            <div
+                {...attributes}
+                {...listeners}
+                className="cursor-grab p-2 text-muted-foreground hover:text-foreground active:cursor-grabbing"
+            >
+                <GripVertical className="size-4" />
+            </div>
+
+            <DropdownMenuCheckboxItem
+                className={`flex flex-1 cursor-pointer items-center justify-between border-none capitalize focus:bg-transparent ${
+                    setting.visible ? '' : 'opacity-60'
+                }`}
+                checked={setting.visible}
+                onCheckedChange={() => onToggle(field.key)}
+                onSelect={(e) => e.preventDefault()}
+            >
+                <div className="flex items-center gap-1">
+                    {field.name}
+                    {field.options && (
+                        <Filter className="size-3 text-foreground/50" />
+                    )}
+                </div>
+                {field.key.includes('.') && (
+                    <span className="text-[8px] font-medium text-blue-500 uppercase">
+                        {field.key.split('.')[0]}
+                    </span>
+                )}
+            </DropdownMenuCheckboxItem>
+        </div>
+    );
 }
 
 export function ColumnSettingsDropdown({
     columnSettings,
     module,
     onToggle,
-    onMove,
+    onReorder,
 }: ColumnSettingsDropdownProps) {
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        }),
+    );
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (over && active.id !== over.id) {
+            const oldIndex = columnSettings.findIndex(
+                (s) => String(s.key) === String(active.id),
+            );
+            const newIndex = columnSettings.findIndex(
+                (s) => String(s.key) === String(over.id),
+            );
+            onReorder(arrayMove(columnSettings, oldIndex, newIndex));
+        }
+    };
+
     return (
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
                 <Button
                     variant="secondary"
@@ -34,70 +135,41 @@ export function ColumnSettingsDropdown({
                     <ChevronDown className="size-4" />
                 </Button>
             </DropdownMenuTrigger>
+
             <DropdownMenuContent
                 align="end"
-                className="w-60 bg-secondary p-2 text-secondary-foreground"
+                className="w-72 bg-secondary p-2 text-secondary-foreground"
             >
                 <div className="mb-1 border-b px-2 py-2 text-xs font-bold tracking-wider text-muted-foreground uppercase">
-                    Column Order & Visibility
+                    Drag to Reorder & Toggle
                 </div>
-                <div className="max-h-[400px] overflow-y-auto pt-1 sm:max-h-fit">
-                    {columnSettings.map((setting, index) => {
-                        const field = module.fields.find(
-                            (f) => f.key === setting.key,
-                        );
-                        if (!field) return null;
-                        return (
-                            <div
-                                key={field.key}
-                                className="group flex items-center rounded-md pr-2 transition-colors hover:bg-background"
-                            >
-                                <DropdownMenuCheckboxItem
-                                    className={`flex-1 cursor-pointer border-none capitalize focus:bg-transparent ${setting.visible ? '' : 'opacity-60'}`}
-                                    checked={setting.visible}
-                                    onCheckedChange={() => onToggle(field.key)}
-                                    onSelect={(e) => e.preventDefault()}
-                                >
-                                    {field.name}
-                                    {field.options && (
-                                        <Filter className="text-foreground/50" />
-                                    )}
-                                </DropdownMenuCheckboxItem>
 
-                                {/* move controls */}
-                                <div className="flex flex-col font-bold text-foreground opacity-40 transition-opacity group-hover:opacity-100">
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-5 w-6 hover:bg-primary/30 hover:text-primary"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            onMove(index, 'up');
-                                        }}
-                                        disabled={index === 0}
-                                    >
-                                        <ChevronUp className="size-3" />
-                                    </Button>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-5 w-6 hover:bg-primary/30 hover:text-primary"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            onMove(index, 'down');
-                                        }}
-                                        disabled={
-                                            index === columnSettings.length - 1
-                                        }
-                                    >
-                                        <ChevronDown className="size-3" />
-                                    </Button>
-                                </div>
-                            </div>
-                        );
-                    })}
+                <div className="scrollbar-thin scrollbar-thumb-muted-foreground/20 max-h-[400px] overflow-x-hidden overflow-y-auto">
+                    <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}
+                    >
+                        <SortableContext
+                            items={columnSettings.map((s) => String(s.key))}
+                            strategy={verticalListSortingStrategy}
+                        >
+                            {columnSettings.map((setting) => {
+                                const field = module.fields.find(
+                                    (f) => f.key === setting.key,
+                                );
+                                if (!field) return null;
+                                return (
+                                    <SortableColumnItem
+                                        key={String(setting.key)}
+                                        setting={setting}
+                                        field={field}
+                                        onToggle={onToggle}
+                                    />
+                                );
+                            })}
+                        </SortableContext>
+                    </DndContext>
                 </div>
             </DropdownMenuContent>
         </DropdownMenu>

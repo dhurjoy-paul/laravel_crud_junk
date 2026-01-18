@@ -28,9 +28,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/books/bulk', [BookController::class, 'bulkDestroy'])->name('books.bulk');
     Route::resource('books', BookController::class);
 
-    Route::delete('/bookloans/bulk', [BookLoanController::class, 'bulkDestroy'])
-        ->name('bookloans.bulk');
-    Route::resource('bookloans', BookLoanController::class);
+    Route::delete('/bookLoans/bulk', [BookLoanController::class, 'bulkDestroy'])
+        ->name('bookLoans.bulk');
+    Route::resource('bookLoans', BookLoanController::class);
     // library
 
     Route::delete('/posts/bulk', [PostController::class, 'bulkDestroy'])->name('posts.bulk');

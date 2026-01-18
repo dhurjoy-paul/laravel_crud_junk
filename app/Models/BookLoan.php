@@ -20,7 +20,7 @@ class BookLoan extends Model
         'student_id' => 'integer',
         'book_id' => 'integer',
         'loan_date' => 'datetime',
-        'due_date' => 'datetime',
+        'due_date' => 'date',
         'returned_date' => 'datetime',
     ];
 

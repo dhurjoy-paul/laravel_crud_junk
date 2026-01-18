@@ -136,21 +136,29 @@ export default function FormDrawer({
                         className="space-y-5 pb-24"
                     >
                         {formFields.map((field) => {
+                            const isRequired = field.required ?? true;
+
                             return (
                                 <div key={field.key} className="space-y-2">
-                                    {field.input_type === 'checkbox' ? null : (
+                                    {!field.input_type ? null : field.input_type ===
+                                      'checkbox' ? null : (
                                         <Label
                                             htmlFor={field.key}
                                             className="text-sm font-medium"
                                         >
                                             {field.name}
+                                            {/* {isRequired && (
+                                                <span className="ml-1 text-destructive-foreground/80 text-base">
+                                                    *
+                                                </span>
+                                            )} */}
                                         </Label>
                                     )}
 
-                                    {field.input_type === 'select' ? (
+                                    {!field.input_type ? null : field.input_type ===
+                                      'select' ? (
                                         <ComboboxField
                                             field={field}
-                                            currentKey={field.key}
                                             currentValue={data[
                                                 field.key
                                             ]?.toString()}
@@ -190,7 +198,7 @@ export default function FormDrawer({
                                                     e.target.value,
                                                 )
                                             }
-                                            required
+                                            required={isRequired}
                                         />
                                     ) : field.input_type === 'file' ? (
                                         <Input
@@ -203,7 +211,7 @@ export default function FormDrawer({
                                                     e.target.files?.[0] || null,
                                                 )
                                             }
-                                            required={!item}
+                                            required={isRequired ?? !item}
                                         />
                                     ) : field.input_type === 'checkbox' ? (
                                         <div className="flex flex-row items-center gap-4 rounded-md border px-5 py-3 shadow-sm">
@@ -246,7 +254,7 @@ export default function FormDrawer({
                                                     ? '1'
                                                     : undefined
                                             }
-                                            required
+                                            required={isRequired}
                                         />
                                     )}
                                     <InputError message={errors[field.key]} />

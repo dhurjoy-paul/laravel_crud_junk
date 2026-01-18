@@ -54,5 +54,15 @@ export function useTableSettings(module: ModuleConfig) {
         setColumnSettings(newSettings);
     };
 
-    return { columnSettings, visibleFields, toggleColumn, moveColumn };
+    const reorderColumns = (newOrder: any[]) => {
+        setColumnSettings(newOrder);
+    };
+
+    return {
+        columnSettings,
+        visibleFields,
+        toggleColumn,
+        moveColumn,
+        reorderColumns,
+    };
 }

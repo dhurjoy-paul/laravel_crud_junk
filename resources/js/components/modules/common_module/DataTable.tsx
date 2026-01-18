@@ -38,12 +38,11 @@ export default function DataTable({
     onEdit: any;
     filters: any;
 }) {
+    const { columnSettings, visibleFields, toggleColumn, reorderColumns } =
+        useTableSettings(module);
     const [selectedIds, setSelectedIds] = useState<(string | number)[]>([]);
     const { fields } = module || {};
     const showActions = module.actions ?? true;
-
-    const { columnSettings, visibleFields, toggleColumn, moveColumn } =
-        useTableSettings(module);
     const { hasActiveFilters, clearFilters } = useFilters(fields, filters);
 
     const toggleSelectAll = () => {
@@ -165,7 +164,7 @@ export default function DataTable({
                             columnSettings={columnSettings}
                             module={module}
                             onToggle={toggleColumn}
-                            onMove={moveColumn}
+                            onReorder={reorderColumns}
                         />
                     </div>
                 </div>

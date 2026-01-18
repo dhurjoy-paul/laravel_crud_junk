@@ -9,6 +9,11 @@ import { cn } from '@/lib/utils';
 import { Check, X } from 'lucide-react';
 import { ModuleField } from './types';
 
+const resolveValue = (obj: any, path: string) => {
+    if (!path || !obj) return undefined;
+    return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+};
+
 export function DataTableCell({
     field,
     row,
@@ -17,7 +22,7 @@ export function DataTableCell({
     row: any;
 }) {
     const displayKey = field.show_key || field.key;
-    const value = row[displayKey];
+    const value = resolveValue(row, displayKey);
 
     // checkbox (boolean value)
     if (field.input_type === 'checkbox' || typeof value === 'boolean') {
@@ -102,7 +107,6 @@ export function DataTableCell({
 
         try {
             const dateObj = new Date(value);
-
             if (isNaN(dateObj.getTime())) return <span>{value}</span>;
 
             if (field.input_type === 'date') {

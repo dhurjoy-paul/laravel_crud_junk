@@ -59,7 +59,7 @@ import { TABLE } from '@/components/editor/transformers/markdown-table-transform
 import { TWEET } from '@/components/editor/transformers/markdown-tweet-transformer';
 
 const placeholder = 'Press / for commands...';
-const maxLength = 500;
+// const maxLength = 500;
 
 export function Plugins({}) {
     const [floatingAnchorElem, setFloatingAnchorElem] =
@@ -158,6 +158,7 @@ export function Plugins({}) {
                     ErrorBoundary={LexicalErrorBoundary}
                 />
 
+                <HistoryPlugin />
                 <ClickableLinkPlugin />
                 <CheckListPlugin />
                 <HorizontalRulePlugin />
@@ -165,7 +166,6 @@ export function Plugins({}) {
                 <ListPlugin />
                 <TabIndentationPlugin />
                 <HashtagPlugin />
-                <HistoryPlugin />
 
                 <MentionsPlugin />
                 <DraggableBlockPlugin anchorElem={floatingAnchorElem} />

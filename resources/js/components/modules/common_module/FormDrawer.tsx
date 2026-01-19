@@ -211,7 +211,7 @@ export default function FormDrawer({
                                                     e.target.files?.[0] || null,
                                                 )
                                             }
-                                            required={isRequired ?? !item}
+                                            required={!item}
                                         />
                                     ) : field.input_type === 'checkbox' ? (
                                         <div className="flex flex-row items-center gap-4 rounded-md border px-5 py-3 shadow-sm">

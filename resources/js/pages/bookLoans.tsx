@@ -53,12 +53,12 @@ export default function BookLoans({
                 form_sn: 2,
             },
             {
-                name: 'Author',
-                key: 'book.author',
-            },
-            {
                 name: 'ISBN',
                 key: 'book.isbn',
+            },
+            {
+                name: 'Author',
+                key: 'book.author',
             },
             {
                 name: 'Loan Date',

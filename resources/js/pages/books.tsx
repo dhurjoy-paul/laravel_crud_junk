@@ -57,7 +57,7 @@ export default function Books({
                 form_sn: 3,
             },
             {
-                name: 'Total Quantity',
+                name: 'Quantity',
                 key: 'quantity',
                 input_type: 'number',
                 form_sn: 5,

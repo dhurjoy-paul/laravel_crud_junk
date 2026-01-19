@@ -159,21 +159,6 @@ abstract class BaseResourceController extends Controller
       $data['slug'] = Str::slug($data[$this->slugColumn]) . '-' . Str::random(5);
     }
 
-    // if ($this->filterKey && $this->relationModel) {
-    //   $columnName = str_replace('_id', '_name', $this->filterKey);
-
-    //   if (Schema::hasColumn((new $this->model)->getTable(), $columnName)) {
-    //     $relationId = $data[$this->filterKey] ?? null;
-
-    //     if ($relationId) {
-    //       $relation = $this->relationModel::find($relationId);
-    //       $data[$columnName] = $relation ? $relation->name : null;
-    //     } else {
-    //       $data[$columnName] = null;
-    //     }
-    //   }
-    // }
-
     $data = $this->syncRelationNames($data);
 
     $this->model::create($data);

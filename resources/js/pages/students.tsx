@@ -65,7 +65,7 @@ export default function Students({
                 form_sn: 5,
             },
             {
-                name: 'Profile Image',
+                name: 'Image',
                 key: 'image',
                 input_type: 'file',
                 form_sn: 6,

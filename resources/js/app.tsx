@@ -30,5 +30,7 @@ createInertiaApp({
     },
 });
 
+// router.on('invalid', () => {});
+
 // This will set light / dark mode on load...
 initializeTheme();

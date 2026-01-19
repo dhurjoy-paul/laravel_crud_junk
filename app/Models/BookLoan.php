@@ -38,8 +38,16 @@ class BookLoan extends Model
     {
         static::creating(function ($loan) {
             $book = $loan->book;
+            $student = $loan->student;
+
             if ($book->available_copies <= 0) {
                 throw new \Exception("Cannot loan book: '{$book->title}' is out of stock.");
+            }
+            if ($student->max_borrow_limit <= 0) {
+                throw new \Exception("Cannot loan book: '{$student->name}' reached his/her borrow limit.");
+            }
+            if ($student->is_active !== "active") {
+                throw new \Exception("Cannot loan book: '{$student->name}' is an inactive student.");
             }
         });
 
